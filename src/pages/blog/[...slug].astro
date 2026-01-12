@@ -14,7 +14,7 @@ export async function getStaticPaths() {
 
 // 获取当前文章数据
 const { entry } = Astro.props;
-const { Content, remarkPluginFrontmatter } = await entry.render();
+const { Content } = await entry.render();
 
 // 计算阅读时间（基于描述长度简单估算）
 // 更精确的方式需要统计渲染后的内容，但这里用描述长度作为参考
