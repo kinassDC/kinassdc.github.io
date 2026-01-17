@@ -1,0 +1,166 @@
+---
+import '../styles/global.css';
+import { getLeanPosts } from '../lib/blog';
+import MainLayout from '../layouts/MainLayout.astro';
+
+const allPosts = await getLeanPosts();
+
+// 按年份分组文章
+const postsByYear = allPosts.reduce((acc, post) => {
+  const year = post.pubDate.getFullYear();
+  if (!acc[year]) {
+    acc[year] = [];
+  }
+  acc[year].push(post);
+  return acc;
+}, {} as Record<number, typeof allPosts>);
+
+// 按年份数组降序排列
+const sortedYears = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a)).map(Number);
+
+// 获取所有分类
+const allCategories = [...new Set(allPosts.map(post => post.category))];
+
+// 获取所有标签
+const allTags = [...new Set(allPosts.flatMap(post => post.tags || []))].sort();
+---
+
+<MainLayout title="文章归档 - 派小站">
+  <section class="max-w-4xl mx-auto px-4 py-8">
+    <!-- 页面标题 -->
+    <header class="text-center mb-16">
+      <div class="inline-flex items-center gap-3 mb-4">
+        <div class="h-px w-12 bg-blue-600"></div>
+        <span class="text-blue-600 text-sm font-black uppercase tracking-[0.3em]">Archives</span>
+        <div class="h-px w-12 bg-blue-600"></div>
+      </div>
+      <h1 class="text-5xl font-black text-slate-900 tracking-tight mb-4">
+        文章归档
+      </h1>
+      <p class="text-slate-500 text-lg">
+        共收录 {allPosts.length} 篇文章
+      </p>
+    </header>
+
+    <!-- 分类快捷筛选 -->
+    <div class="flex flex-wrap justify-center gap-3 mb-16">
+      <a
+        href="#all"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-full text-xs font-black uppercase tracking-wider hover:bg-blue-600 transition-colors"
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+        </svg>
+        全部
+      </a>
+      {allCategories.map(category => (
+        <a
+          href={`#category-${category}`}
+          class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-full text-xs font-black uppercase tracking-wider hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+          </svg>
+          {category}
+        </a>
+      ))}
+    </div>
+
+    <!-- 按年份分组展示文章 -->
+    {sortedYears.map((year, yearIndex) => (
+      <section id={`year-${year}`} class="mb-16 animate-fade-up" style={`animation-delay: ${yearIndex * 0.15}s; opacity: 0;`}>
+        <div class="flex items-center gap-4 mb-8">
+          <h2 class="text-3xl font-black text-slate-900 tracking-tight">
+            {year}
+          </h2>
+          <div class="flex-1 h-px bg-gradient-to-r from-blue-600/50 to-transparent"></div>
+          <span class="text-slate-400 text-sm font-mono">
+            {postsByYear[year].length} 篇
+          </span>
+        </div>
+
+        <div class="space-y-4">
+          {postsByYear[year].map((post, index) => (
+            <article
+              id={`post-${post.slug}`}
+              class={`group relative p-6 bg-white border border-slate-100 rounded-2xl hover:border-blue-500/30 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-500 animate-fade-up`}
+              style={`animation-delay: ${(yearIndex * 0.15) + (index * 0.05)}s; opacity: 0;`}
+            >
+              <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                <!-- 日期 -->
+                <div class="flex items-center gap-3 min-w-[140px]">
+                  <div class="w-12 h-12 bg-blue-50 rounded-xl flex flex-col items-center justify-center">
+                    <span class="text-blue-600 text-lg font-black leading-none">
+                      {post.pubDate.getDate()}
+                    </span>
+                    <span class="text-blue-400 text-[9px] font-black uppercase tracking-wider leading-none mt-1">
+                      {post.pubDate.toLocaleDateString('zh-CN', { month: 'short' })}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- 文章内容 -->
+                <div class="flex-1">
+                  <a
+                    href={`/blog/${post.slug}`}
+                    class="block group/title"
+                  >
+                    <h3 class="text-lg font-bold text-slate-900 group-hover/title:text-blue-600 transition-colors mb-2">
+                      {post.title}
+                    </h3>
+                  </a>
+                  <p class="text-slate-500 text-sm line-clamp-1 mb-2">
+                    {post.description}
+                  </p>
+                  <div class="flex items-center gap-4">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-wider">
+                      {post.category}
+                    </span>
+                    {post.tags && post.tags.length > 0 && (
+                      <div class="flex flex-wrap gap-2">
+                        {post.tags.map(tag => (
+                          <span class="text-[10px] text-slate-400 hover:text-blue-600 transition-colors cursor-pointer">
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <!-- 箭头 -->
+                <a
+                  href={`/blog/${post.slug}`}
+                  class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300"
+                >
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <!-- 标签云 -->
+    {allTags.length > 0 && (
+      <section class="mt-20 pt-16 border-t border-slate-200">
+        <h2 class="text-2xl font-black text-slate-900 mb-8 text-center">
+          标签云
+        </h2>
+        <div class="flex flex-wrap justify-center gap-3">
+          {allTags.map(tag => (
+            <a
+              href={`/tags/${tag}`}
+              class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg text-sm font-medium hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all"
+            >
+              <span>#{tag}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+  </section>
+</MainLayout>

@@ -31,6 +31,8 @@ project1/
 │   │   └── blog.ts           # 博客数据处理
 │   ├── pages/                # 路由页面
 │   │   ├── index.astro       # 首页
+│   │   ├── posts.astro       # 文章归档页
+│   │   ├── about.astro       # 关于页
 │   │   ├── blog/
 │   │   │   └── [...slug].astro  # 博客详情页（动态路由）
 │   │   └── api/
@@ -70,6 +72,8 @@ project1/
 | 路由 | 文件 | 功能 |
 |------|------|------|
 | `/` | `pages/index.astro` | 首页，展示文章列表 |
+| `/posts` | `pages/posts.astro` | 文章归档页，按年份分组展示所有文章 |
+| `/about` | `pages/about.astro` | 关于页，展示个人信息、兴趣和联系方式 |
 | `/blog/:slug` | `pages/blog/[...slug].astro` | 博客详情页 |
 | `/api/posts/:page` | `pages/api/posts/[page].json.ts` | 分页数据 API |
 
@@ -89,6 +93,18 @@ getLeanPosts(): Promise<Post[]>
 - 分类快捷入口（技术/生活）
 - 文章卡片列表
 - 无限滚动/加载更多
+
+#### 文章归档页 (`/posts`)
+- 按年份分组展示所有文章
+- 分类快捷筛选
+- 标签云展示
+- 响应式文章卡片设计
+
+#### 关于页 (`/about`)
+- 个人简介卡片
+- 兴趣爱好展示（编程、音乐、摄影）
+- 个人信念展示
+- 联系方式（QQ、GitHub）
 
 #### 博客详情页 (`/blog/:slug`)
 - 面包屑导航
