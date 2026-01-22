@@ -1,0 +1,197 @@
+---
+import '../../styles/global.css';
+import { getCollection } from 'astro:content';
+import MainLayout from '../../layouts/MainLayout.astro';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('blog', ({ data }) => data.isDraft !== true);
+
+  // 获取所有标签
+  const tags = [...new Set(allPosts.flatMap(post => post.data.tags || []))];
+
+  return tags.map(tag => ({
+    params: { tag },
+  }));
+}
+
+const { tag } = Astro.params;
+const allPosts = await getCollection('blog', ({ data }) => data.isDraft !== true);
+
+// 筛选包含当前标签的文章
+const tagPosts = allPosts
+  .filter(post => post.data.tags?.includes(tag))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .map(post => ({
+    slug: post.slug,
+    title: post.data.title,
+    description: post.data.description,
+    pubDate: post.data.pubDate,
+    category: post.data.category,
+    tags: post.data.tags,
+    image: post.data.image,
+  }));
+
+// 获取所有标签（用于导航和标签云）
+const allTagsWithCount = allPosts
+  .flatMap(post => post.data.tags || [])
+  .reduce((acc, tag) => {
+    acc[tag] = (acc[tag] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+const allTags = Object.entries(allTagsWithCount)
+  .map(([tag, count]) => ({ tag, count }))
+  .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
+---
+
+<MainLayout title={`#${tag} - 标签 - 派小站`}>
+  <section class="max-w-4xl mx-auto px-4 py-8">
+    <!-- 面包屑导航 -->
+    <nav class="flex items-center gap-2 text-sm text-slate-500 mb-8">
+      <a href="/" class="hover:text-blue-600 transition-colors">首页</a>
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+      <a href="/posts" class="hover:text-blue-600 transition-colors">归档</a>
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+      <span class="text-blue-600 font-medium">#{tag}</span>
+    </nav>
+
+    <!-- 标签头部 -->
+    <header class="mb-12">
+      <div class="inline-flex items-center gap-3 mb-4">
+        <div class="h-px w-12 bg-blue-600"></div>
+        <span class="text-blue-600 text-sm font-black uppercase tracking-[0.3em]">Tag</span>
+        <div class="h-px w-12 bg-blue-600"></div>
+      </div>
+      <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-4">
+        #{tag}
+      </h1>
+      <p class="text-slate-500 text-lg">
+        共收录 {tagPosts.length} 篇文章
+      </p>
+    </header>
+
+    <!-- 标签云 -->
+    <div class="mb-12 p-6 bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl border border-slate-200">
+      <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider mb-4 px-2">热门标签</h3>
+      <div class="flex flex-wrap gap-2">
+        {allTags.map(({ tag: t, count }) => (
+          <a
+            href={`/tags/${t}`}
+            class={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              t === tag
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 scale-105'
+                : 'bg-white border border-slate-200 text-slate-600 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 hover:scale-105'
+            }`}
+          >
+            <span>#{t}</span>
+            <span class={`text-[10px] ${t === tag ? 'text-blue-100' : 'text-slate-400'}`}>
+              {count}
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- 文章列表 -->
+    {tagPosts.length > 0 ? (
+      <div class="space-y-4">
+        {tagPosts.map((post, index) => (
+          <article
+            class="group relative p-6 bg-white border border-slate-100 rounded-2xl hover:border-blue-500/30 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-500 animate-fade-up"
+            style={`animation-delay: ${index * 0.08}s; opacity: 0;`}
+          >
+            <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+              <!-- 日期 -->
+              <div class="flex items-center gap-3 min-w-[140px]">
+                <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex flex-col items-center justify-center shadow-lg shadow-blue-500/20">
+                  <span class="text-white text-xl font-black leading-none">
+                    {post.pubDate.getDate()}
+                  </span>
+                  <span class="text-blue-100 text-[10px] font-black uppercase tracking-wider leading-none mt-1">
+                    {post.pubDate.toLocaleDateString('zh-CN', { month: 'short' })}
+                  </span>
+                </div>
+              </div>
+
+              <!-- 文章内容 -->
+              <div class="flex-1">
+                <a href={`/blog/${post.slug}`} class="block group/title">
+                  <h3 class="text-xl font-bold text-slate-900 group-hover/title:text-blue-600 transition-colors mb-2">
+                    {post.title}
+                  </h3>
+                </a>
+                <p class="text-slate-500 text-sm line-clamp-2 mb-3">
+                  {post.description}
+                </p>
+                <div class="flex items-center gap-3 flex-wrap">
+                  <a
+                    href={`/categories/${post.category}`}
+                    class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-black uppercase tracking-wider hover:bg-blue-100 transition-colors"
+                  >
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    {post.category}
+                  </a>
+                  {post.tags && post.tags.length > 0 && (
+                    <div class="flex flex-wrap gap-2">
+                      {post.tags.slice(0, 4).map(t => (
+                        <a
+                          href={`/tags/${t}`}
+                          class={`text-[11px] transition-colors cursor-pointer ${
+                            t === tag
+                              ? 'text-blue-600 font-medium'
+                              : 'text-slate-400 hover:text-blue-600'
+                          }`}
+                        >
+                          #{t}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <!-- 箭头 -->
+              <a
+                href={`/blog/${post.slug}`}
+                class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300 group-hover:scale-110"
+              >
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <div class="text-center py-16">
+        <div class="w-20 h-20 mx-auto mb-6 bg-slate-100 rounded-full flex items-center justify-center">
+          <svg class="w-10 h-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-slate-900 mb-2">暂无文章</h3>
+        <p class="text-slate-500">该标签下还没有发布任何文章</p>
+      </div>
+    )}
+
+    <!-- 返回按钮 -->
+    <div class="mt-12 text-center">
+      <a
+        href="/posts"
+        class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-600 rounded-full text-sm font-medium hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all"
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        返回文章归档
+      </a>
+    </div>
+  </section>
+</MainLayout>
