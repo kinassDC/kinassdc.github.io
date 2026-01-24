@@ -23,6 +23,27 @@ const allCategories = [...new Set(allPosts.map(post => post.category))];
 
 // 获取所有标签
 const allTags = [...new Set(allPosts.flatMap(post => post.tags || []))].sort();
+
+// 初始只渲染前 20 篇文章（性能优化）
+const INITIAL_POST_COUNT = 20;
+let renderedPostCount = 0;
+const initialPosts: Array<{ year: number; posts: typeof allPosts }> = [];
+
+for (const year of sortedYears) {
+  const posts = postsByYear[year];
+  const remaining = INITIAL_POST_COUNT - renderedPostCount;
+
+  if (remaining <= 0) break;
+
+  if (posts.length <= remaining) {
+    initialPosts.push({ year, posts });
+    renderedPostCount += posts.length;
+  } else {
+    initialPosts.push({ year, posts: posts.slice(0, remaining) });
+    renderedPostCount += remaining;
+    break;
+  }
+}
 ---
 
 <MainLayout title="文章归档 - 派小站">
@@ -38,7 +59,7 @@ const allTags = [...new Set(allPosts.flatMap(post => post.tags || []))].sort();
         文章归档
       </h1>
       <p class="text-slate-500 text-lg">
-        共收录 {allPosts.length} 篇文章
+        共收录 <span id="total-posts-count">{allPosts.length}</span> 篇文章
       </p>
     </header>
 
@@ -66,83 +87,102 @@ const allTags = [...new Set(allPosts.flatMap(post => post.tags || []))].sort();
       ))}
     </div>
 
-    <!-- 按年份分组展示文章 -->
-    {sortedYears.map((year, yearIndex) => (
-      <section id={`year-${year}`} class="mb-16 animate-fade-up" style={`animation-delay: ${yearIndex * 0.15}s; opacity: 0;`}>
-        <div class="flex items-center gap-4 mb-8">
-          <h2 class="text-3xl font-black text-slate-900 tracking-tight">
-            {year}
-          </h2>
-          <div class="flex-1 h-px bg-gradient-to-r from-blue-600/50 to-transparent"></div>
-          <span class="text-slate-400 text-sm font-mono">
-            {postsByYear[year].length} 篇
-          </span>
-        </div>
+    <!-- 按年份分组展示文章容器 -->
+    <div id="posts-container">
+      {initialPosts.map(({ year, posts }, yearIndex) => (
+        <section id={`year-${year}`} class="mb-16" data-year={year}>
+          <div class="flex items-center gap-4 mb-8">
+            <h2 class="text-3xl font-black text-slate-900 tracking-tight">
+              {year}
+            </h2>
+            <div class="flex-1 h-px bg-gradient-to-r from-blue-600/50 to-transparent"></div>
+            <span class="text-slate-400 text-sm font-mono" id="year-count-{year}">
+              {postsByYear[year].length} 篇
+            </span>
+          </div>
 
-        <div class="space-y-4">
-          {postsByYear[year].map((post, index) => (
-            <article
-              id={`post-${post.slug}`}
-              class={`group relative p-6 bg-white border border-slate-100 rounded-2xl hover:border-blue-500/30 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-500 animate-fade-up`}
-              style={`animation-delay: ${(yearIndex * 0.15) + (index * 0.05)}s; opacity: 0;`}
-            >
-              <div class="flex flex-col sm:flex-row sm:items-center gap-4">
-                <!-- 日期 -->
-                <div class="flex items-center gap-3 min-w-[140px]">
-                  <div class="w-12 h-12 bg-blue-50 rounded-xl flex flex-col items-center justify-center">
-                    <span class="text-blue-600 text-lg font-black leading-none">
-                      {post.pubDate.getDate()}
-                    </span>
-                    <span class="text-blue-400 text-[9px] font-black uppercase tracking-wider leading-none mt-1">
-                      {post.pubDate.toLocaleDateString('zh-CN', { month: 'short' })}
-                    </span>
+          <div class="space-y-4" data-year-posts={year}>
+            {posts.map((post, index) => (
+              <article
+                id={`post-${post.slug}`}
+                data-post-slug={post.slug}
+                class="group relative p-6 bg-white border border-slate-100 rounded-2xl hover:border-blue-500/30 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-500"
+                style="content-visibility: auto; contain-intrinsic-size: 0 200px;"
+              >
+                <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                  <!-- 日期 -->
+                  <div class="flex items-center gap-3 min-w-[140px]">
+                    <div class="w-12 h-12 bg-blue-50 rounded-xl flex flex-col items-center justify-center">
+                      <span class="text-blue-600 text-lg font-black leading-none">
+                        {post.pubDate.getDate()}
+                      </span>
+                      <span class="text-blue-400 text-[9px] font-black uppercase tracking-wider leading-none mt-1">
+                        {post.pubDate.toLocaleDateString('zh-CN', { month: 'short' })}
+                      </span>
+                    </div>
                   </div>
-                </div>
 
-                <!-- 文章内容 -->
-                <div class="flex-1">
+                  <!-- 文章内容 -->
+                  <div class="flex-1">
+                    <a
+                      href={`/blog/${post.slug}`}
+                      class="block group/title"
+                    >
+                      <h3 class="text-lg font-bold text-slate-900 group-hover/title:text-blue-600 transition-colors mb-2">
+                        {post.title}
+                      </h3>
+                    </a>
+                    <p class="text-slate-500 text-sm line-clamp-1 mb-2">
+                      {post.description}
+                    </p>
+                    <div class="flex items-center gap-4">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-wider">
+                        {post.category}
+                      </span>
+                      {post.tags && post.tags.length > 0 && (
+                        <div class="flex flex-wrap gap-2">
+                          {post.tags.map(tag => (
+                            <span class="text-[10px] text-slate-400 hover:text-blue-600 transition-colors cursor-pointer">
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <!-- 箭头 -->
                   <a
                     href={`/blog/${post.slug}`}
-                    class="block group/title"
+                    class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300"
                   >
-                    <h3 class="text-lg font-bold text-slate-900 group-hover/title:text-blue-600 transition-colors mb-2">
-                      {post.title}
-                    </h3>
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
                   </a>
-                  <p class="text-slate-500 text-sm line-clamp-1 mb-2">
-                    {post.description}
-                  </p>
-                  <div class="flex items-center gap-4">
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-wider">
-                      {post.category}
-                    </span>
-                    {post.tags && post.tags.length > 0 && (
-                      <div class="flex flex-wrap gap-2">
-                        {post.tags.map(tag => (
-                          <span class="text-[10px] text-slate-400 hover:text-blue-600 transition-colors cursor-pointer">
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
                 </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
 
-                <!-- 箭头 -->
-                <a
-                  href={`/blog/${post.slug}`}
-                  class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300"
-                >
-                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                  </svg>
-                </a>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-    ))}
+    <!-- 加载更多按钮 -->
+    <div id="load-more-wrapper" class="text-center mt-12" style="display: {allPosts.length > INITIAL_POST_COUNT ? 'block' : 'none'};">
+      <button
+        id="load-more-posts-btn"
+        class="inline-flex items-center gap-3 px-8 py-3 bg-slate-900 text-white rounded-full text-xs font-black uppercase tracking-wider hover:bg-blue-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+        加载更多文章
+      </button>
+      <p class="text-slate-400 text-sm mt-3">
+        已加载 <span id="loaded-count">{INITIAL_POST_COUNT}</span> / {allPosts.length} 篇
+      </p>
+    </div>
 
     <!-- 标签云 -->
     {allTags.length > 0 && (
@@ -163,4 +203,169 @@ const allTags = [...new Set(allPosts.flatMap(post => post.tags || []))].sort();
       </section>
     )}
   </section>
+
+  <!-- 虚拟滚动懒加载脚本 -->
+  <script define:vars={{ allPosts, postsByYear, sortedYears, INITIAL_POST_COUNT }}>
+    const LOAD_BATCH_SIZE = 15; // 每次加载 15 篇文章
+    let loadedCount = {INITIAL_POST_COUNT};
+    let currentYearIndex = -1;
+    let currentPostIndex = 0;
+
+    // 找出下一个要加载的年份和文章索引
+    const findNextBatch = () => {
+      const batch = [];
+      let remaining = LOAD_BATCH_SIZE;
+
+      // 从当前年份和文章索引开始
+      for (let i = currentYearIndex + 1; i < sortedYears.length && remaining > 0; i++) {
+        const year = sortedYears[i];
+        const posts = postsByYear[year];
+        const startIndex = i === currentYearIndex ? currentPostIndex : 0;
+
+        for (let j = startIndex; j < posts.length && remaining > 0; j++) {
+          batch.push({ year, post: posts[j], yearIndex: i, postIndex: j });
+          remaining--;
+          currentYearIndex = i;
+          currentPostIndex = j + 1;
+        }
+      }
+
+      return batch;
+    };
+
+    // 创建文章 HTML
+    const createPostHTML = (data: typeof allPosts[0], year: number, index: number) => {
+      const tagsHTML = data.tags?.length > 0
+        ? data.tags.map((tag: string) => `<span class="text-[10px] text-slate-400 hover:text-blue-600 transition-colors cursor-pointer">#${tag}</span>`).join('')
+        : '';
+
+      return `
+        <article
+          id="post-${data.slug}"
+          data-post-slug="${data.slug}"
+          class="group relative p-6 bg-white border border-slate-100 rounded-2xl hover:border-blue-500/30 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-500"
+          style="content-visibility: auto; contain-intrinsic-size: 0 200px;"
+        >
+          <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div class="flex items-center gap-3 min-w-[140px]">
+              <div class="w-12 h-12 bg-blue-50 rounded-xl flex flex-col items-center justify-center">
+                <span class="text-blue-600 text-lg font-black leading-none">${data.pubDate.getDate()}</span>
+                <span class="text-blue-400 text-[9px] font-black uppercase tracking-wider leading-none mt-1">${data.pubDate.toLocaleDateString('zh-CN', { month: 'short' })}</span>
+              </div>
+            </div>
+            <div class="flex-1">
+              <a href="/blog/${data.slug}" class="block group/title">
+                <h3 class="text-lg font-bold text-slate-900 group-hover/title:text-blue-600 transition-colors mb-2">${data.title}</h3>
+              </a>
+              <p class="text-slate-500 text-sm line-clamp-1 mb-2">${data.description}</p>
+              <div class="flex items-center gap-4">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-wider">${data.category}</span>
+                ${tagsHTML ? `<div class="flex flex-wrap gap-2">${tagsHTML}</div>` : ''}
+              </div>
+            </div>
+            <a href="/blog/${data.slug}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </a>
+          </div>
+        </article>
+      `;
+    };
+
+    // 加载更多文章
+    const loadMorePosts = () => {
+      const btn = document.getElementById('load-more-posts-btn') as HTMLButtonElement;
+      const wrapper = document.getElementById('load-more-wrapper') as HTMLElement;
+      const loadedCountEl = document.getElementById('loaded-count') as HTMLElement;
+      const container = document.getElementById('posts-container') as HTMLElement;
+
+      if (!btn || !wrapper || !container) return;
+
+      // 禁用按钮
+      btn.disabled = true;
+      btn.innerHTML = `
+        <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        加载中...
+      `;
+
+      // 获取下一批文章
+      const batch = findNextBatch();
+
+      // 按年份分组渲染
+      const yearsMap = new Map<number, typeof allPosts>();
+      batch.forEach(({ year, post }) => {
+        if (!yearsMap.has(year)) yearsMap.set(year, []);
+        yearsMap.get(year)!.push(post);
+      });
+
+      // 渲染文章
+      let insertedCount = 0;
+      yearsMap.forEach((posts, year) => {
+        let yearSection = document.getElementById(`year-${year}`);
+        let postsContainer;
+
+        if (!yearSection) {
+          // 创建新年份区块
+          const yearIndex = sortedYears.indexOf(year);
+          yearSection = document.createElement('section');
+          yearSection.id = `year-${year}`;
+          yearSection.className = 'mb-16';
+          yearSection.setAttribute('data-year', year.toString());
+          yearSection.innerHTML = `
+            <div class="flex items-center gap-4 mb-8">
+              <h2 class="text-3xl font-black text-slate-900 tracking-tight">${year}</h2>
+              <div class="flex-1 h-px bg-gradient-to-r from-blue-600/50 to-transparent"></div>
+              <span class="text-slate-400 text-sm font-mono">${postsByYear[year].length} 篇</span>
+            </div>
+            <div class="space-y-4" data-year-posts="${year}"></div>
+          `;
+          container.appendChild(yearSection);
+          postsContainer = yearSection.querySelector(`[data-year-posts="${year}"]`)!;
+        } else {
+          postsContainer = yearSection.querySelector(`[data-year-posts="${year}"]`)!;
+        }
+
+        // 添加文章到对应年份区块
+        posts.forEach((post) => {
+          postsContainer.insertAdjacentHTML('beforeend', createPostHTML(post, year, insertedCount));
+          insertedCount++;
+        });
+      });
+
+      // 更新计数
+      loadedCount = Math.min(loadedCount + insertedCount, allPosts.length);
+      if (loadedCountEl) loadedCountEl.textContent = loadedCount.toString();
+
+      // 恢复或隐藏按钮
+      if (loadedCount >= allPosts.length) {
+        wrapper.style.transition = 'opacity 0.3s ease-out';
+        wrapper.style.opacity = '0';
+        setTimeout(() => wrapper.style.display = 'none', 300);
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = `
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+          加载更多文章
+        `;
+      }
+    };
+
+    // 绑定加载更多按钮
+    const loadMoreBtn = document.getElementById('load-more-posts-btn');
+    loadMoreBtn?.addEventListener('click', loadMorePosts);
+
+    // 使用 IntersectionObserver 实现虚拟滚动（可选：自动加载）
+    // const observer = new IntersectionObserver((entries) => {
+    //   if (entries[0].isIntersecting) {
+    //     loadMorePosts();
+    //   }
+    // }, { threshold: 0.1, rootMargin: '200px' });
+    // observer.observe(loadMoreBtn!);
+  </script>
 </MainLayout>

@@ -92,30 +92,69 @@ const { title = "派小站" } = Astro.props;
             const progressCircle = document.getElementById('progress-circle');
             const circumference = 2 * Math.PI * 24; // 2πr，r=24
 
-            // 更新进度条
-            const updateProgress = () => {
-                const scrollTop = window.scrollY;
-                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-                const scrollPercent = Math.min(scrollTop / docHeight, 1);
-                const offset = circumference - (scrollPercent * circumference);
+            // 节流函数 - 限制函数执行频率
+            const throttle = <T extends (...args: any[]) => void>(
+                fn: T,
+                delay: number
+            ): ((...args: Parameters<T>) => void) => {
+                let lastCall = 0;
+                let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-                // 更新进度圆环
-                if (progressCircle) {
-                    progressCircle.style.strokeDashoffset = offset.toString();
-                }
+                return (...args: Parameters<T>) => {
+                    const now = Date.now();
+                    const remaining = delay - (now - lastCall);
 
-                // 控制按钮显示/隐藏（降低阈值为 50px）
-                if (scrollTop > 50) {
-                    backToTopBtn?.classList.remove('opacity-0', 'invisible');
-                    backToTopBtn?.classList.add('opacity-100', 'visible');
-                } else {
-                    backToTopBtn?.classList.add('opacity-0', 'invisible');
-                    backToTopBtn?.classList.remove('opacity-100', 'visible');
-                }
+                    if (remaining <= 0) {
+                        if (timeoutId) {
+                            clearTimeout(timeoutId);
+                            timeoutId = null;
+                        }
+                        lastCall = now;
+                        fn(...args);
+                    } else if (!timeoutId) {
+                        timeoutId = setTimeout(() => {
+                            lastCall = Date.now();
+                            timeoutId = null;
+                            fn(...args);
+                        }, remaining);
+                    }
+                };
             };
 
-            // 监听滚动事件
-            window.addEventListener('scroll', updateProgress);
+            // 使用 requestAnimationFrame 优化进度更新
+            let ticking = false;
+            const updateProgress = () => {
+                if (ticking) return;
+
+                ticking = true;
+                requestAnimationFrame(() => {
+                    const scrollTop = window.scrollY;
+                    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                    const scrollPercent = Math.min(scrollTop / docHeight, 1);
+                    const offset = circumference - (scrollPercent * circumference);
+
+                    // 更新进度圆环
+                    if (progressCircle) {
+                        progressCircle.style.strokeDashoffset = offset.toString();
+                    }
+
+                    // 控制按钮显示/隐藏
+                    if (scrollTop > 50) {
+                        backToTopBtn?.classList.remove('opacity-0', 'invisible');
+                        backToTopBtn?.classList.add('opacity-100', 'visible');
+                    } else {
+                        backToTopBtn?.classList.add('opacity-0', 'invisible');
+                        backToTopBtn?.classList.remove('opacity-100', 'visible');
+                    }
+
+                    ticking = false;
+                });
+            };
+
+            // 监听滚动事件 - 使用节流（16ms ≈ 60fps）
+            const throttledUpdate = throttle(updateProgress, 16);
+            window.addEventListener('scroll', throttledUpdate, { passive: true });
+
             // 初始化进度
             updateProgress();
 
@@ -125,7 +164,6 @@ const { title = "派小站" } = Astro.props;
                     top: 0,
                     behavior: 'smooth'
                 });
-                // 进度条会在滚动过程中通过 scroll 事件自动更新
             });
         </script>
     </body>

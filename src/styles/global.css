@@ -6,6 +6,46 @@
     scrollbar-width: none;    /* Firefox */
   }
 
+  /* === 性能优化 === */
+  /* 启用 GPU 加速 */
+  .gpu-accelerate {
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  /* 内容可见性优化 - 跳过不可见内容的渲染 */
+  .content-visibility-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 500px;
+  }
+
+  /* 减少重排的 contain 属性 */
+  .contain-layout {
+    contain: layout;
+  }
+
+  .contain-paint {
+    contain: paint;
+  }
+
+  .contain-strict {
+    contain: strict;
+  }
+
+  /* 滚动时优化性能 */
+  .will-change-transform {
+    will-change: transform;
+  }
+
+  /* 减少动画时的重排 */
+  .post-card,
+  .category-card-tech,
+  .category-card-life,
+  .hero-card {
+    contain: layout style paint;
+  }
+
   body::-webkit-scrollbar {
     display: none;            /* Chrome/Safari */
   }

@@ -1,8 +1,7 @@
 ---
-import '../styles/global.css';  
+import '../styles/global.css';
 import { getLeanPosts } from '../lib/blog';
 import MainLayout from '../layouts/MainLayout.astro';
-import { getCollection } from 'astro:content';
 
 // 直接调用调度中心，拿到的就是排好序、过滤好的干净数据
 const allPosts = await getLeanPosts();
@@ -153,6 +152,23 @@ const initialPosts = allPosts.slice(0, 10);
     const container = document.querySelector('.post-grid') as HTMLElement;
     const wrapper = document.querySelector('#load-more-wrapper') as HTMLElement;
 
+    // 最大加载文章数限制（防止 DOM 过多导致卡顿）
+    const MAX_POSTS = 100;
+    let loadedPosts = 10; // 初始已加载 10 篇
+
+    // 防抖函数 - 防止快速重复点击
+    const debounce = <T extends (...args: any[]) => void>(
+      fn: T,
+      delay: number
+    ): ((...args: Parameters<T>) => void) => {
+      let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+      return (...args: Parameters<T>) => {
+        if (timeoutId) clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => fn(...args), delay);
+      };
+    };
+
     // 创建骨架屏HTML
     const createSkeletonHTML = () => `
       <article class="post-card group">
@@ -166,7 +182,22 @@ const initialPosts = allPosts.slice(0, 10);
       </article>
     `;
 
-    btn?.addEventListener('click', async () => {
+    // 加载更多文章的核心函数
+    const loadMorePosts = async () => {
+      if (!btn || !container || !wrapper) return;
+
+      // 检查是否达到最大文章数
+      if (loadedPosts >= MAX_POSTS) {
+        wrapper.innerHTML = `
+          <p class="text-slate-400 text-sm">
+            已加载 ${loadedPosts} 篇文章，前往
+            <a href="/posts" class="text-blue-600 hover:underline">归档页</a>
+            查看全部
+          </p>
+        `;
+        return;
+      }
+
       const nextPage = btn.getAttribute('data-next-page') ?? '2';
 
       // 禁用按钮并更新状态
@@ -175,7 +206,7 @@ const initialPosts = allPosts.slice(0, 10);
       btn.classList.add('opacity-70', 'cursor-not-allowed');
 
       // 显示骨架屏
-      const skeletonsCount = Math.min(3, 6); // 最多显示3个骨架
+      const skeletonsCount = Math.min(3, 6);
       const skeletonsHTML = Array(skeletonsCount).fill(0).map(() => createSkeletonHTML()).join('');
       const skeletonContainer = document.createElement('div');
       skeletonContainer.className = 'skeleton-container grid gap-6';
@@ -183,9 +214,6 @@ const initialPosts = allPosts.slice(0, 10);
       skeletonContainer.innerHTML = skeletonsHTML;
 
       container.insertAdjacentElement('afterend', skeletonContainer);
-
-      // 滚动到骨架屏
-      skeletonContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
       try {
         const response = await fetch(`/api/posts/${nextPage}.json`);
@@ -195,20 +223,22 @@ const initialPosts = allPosts.slice(0, 10);
 
         const { posts, hasNext }: { posts: any[], hasNext: boolean } = await response.json();
 
-        // 短暂延迟以显示骨架屏动画（至少显示800ms）
-        await new Promise(resolve => setTimeout(resolve, 800));
+        // 短暂延迟以显示骨架屏动画
+        await new Promise(resolve => setTimeout(resolve, 600));
 
         // 移除骨架屏
         skeletonContainer.remove();
 
         if (!posts || posts.length === 0) {
-          console.log('没有更多文章了');
           wrapper.style.display = 'none';
           return;
         }
 
-        const html = posts.map((post: any, index: number) => {
-          const order = (parseInt(nextPage) - 1) * 10 + index + 1;
+        // 计算本次可以加载的文章数（考虑最大限制）
+        const remainingSlots = MAX_POSTS - loadedPosts;
+        const postsToLoad = Math.min(posts.length, remainingSlots);
+
+        const html = posts.slice(0, postsToLoad).map((post: any) => {
           const postDate = new Date(post.pubDate).toLocaleDateString('zh-CN', {
             year: 'numeric',
             month: 'short',
@@ -217,7 +247,7 @@ const initialPosts = allPosts.slice(0, 10);
           const readTime = Math.max(1, Math.ceil(post.description.length / 400));
 
           return `
-            <article class="post-card group opacity-0 translate-y-4" style="animation: fadeUp 0.6s ease-out ${index * 0.1}s forwards;">
+            <article class="post-card group opacity-0 translate-y-4" style="animation: fadeUp 0.5s ease-out ${Math.min(index * 0.08, 0.3)}s forwards; content-visibility: auto; contain-intrinsic-size: 0 400px;">
               <div class="post-content relative z-10">
                 <span class="category-tag">${post.category}</span>
                 ${post.image ? `
@@ -252,36 +282,43 @@ const initialPosts = allPosts.slice(0, 10);
         }).join('');
 
         container.insertAdjacentHTML('beforeend', html);
+        loadedPosts += postsToLoad;
 
-        // 恢复按钮状态
-        btn.disabled = false;
-        btn.classList.remove('opacity-70', 'cursor-not-allowed');
-        btn.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-blue-500 group-hover:animate-pulse transition-all duration-300"></span> 加载更多`;
-
-        if (hasNext) {
-          btn.setAttribute('data-next-page', String(parseInt(nextPage) + 1));
-        } else {
-          // 平滑淡出
-          wrapper.style.transition = 'opacity 0.5s ease-out';
+        // 更新按钮状态
+        if (loadedPosts >= MAX_POSTS) {
+          wrapper.innerHTML = `
+            <p class="text-slate-400 text-sm">
+              已加载 ${loadedPosts} 篇文章，前往
+              <a href="/posts" class="text-blue-600 hover:underline">归档页</a>
+              查看全部
+            </p>
+          `;
+        } else if (!hasNext || postsToLoad < posts.length) {
+          // 没有更多文章或达到最大限制
+          wrapper.style.transition = 'opacity 0.3s ease-out';
           wrapper.style.opacity = '0';
-          setTimeout(() => {
-            wrapper.style.display = 'none';
-          }, 500);
+          setTimeout(() => wrapper.style.display = 'none', 300);
+        } else {
+          btn.disabled = false;
+          btn.classList.remove('opacity-70', 'cursor-not-allowed');
+          btn.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-blue-500 group-hover:animate-pulse transition-all duration-300"></span> 加载更多`;
+          btn.setAttribute('data-next-page', String(parseInt(nextPage) + 1));
         }
       } catch (e) {
-        // 移除骨架屏
-        skeletonContainer.remove();
-
+        skeletonContainer?.remove();
         console.error('加载更多失败:', e);
         btn.disabled = false;
         btn.classList.remove('opacity-70', 'cursor-not-allowed');
         btn.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> 加载失败，点击重试';
 
-        // 3秒后恢复原状
         setTimeout(() => {
           btn.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-blue-500 group-hover:animate-pulse transition-all duration-300"></span> 加载更多';
         }, 3000);
       }
-    });
+    };
+
+    // 使用防抖包装加载函数（300ms）
+    const debouncedLoadMore = debounce(loadMorePosts, 300);
+    btn?.addEventListener('click', debouncedLoadMore);
   </script>
 </MainLayout>
