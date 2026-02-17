@@ -3,14 +3,13 @@ import '../styles/global.css';
 import { getLeanPosts } from '../lib/blog';
 import MainLayout from '../layouts/MainLayout.astro';
 
-// 直接调用调度中心，拿到的就是排好序、过滤好的干净数据
 const allPosts = await getLeanPosts();
 
-// 首页初始只展示前 10 个
 const initialPosts = allPosts.slice(0, 10);
 ---
 <MainLayout>
-  <section class="max-w-6xl mx-auto px-4 mb-16 flex flex-col lg:flex-row gap-4 items-stretch">
+  <!-- 主页英雄区 -->
+  <section class="max-w-6xl mx-auto px-4 mt-4 mb-16 flex flex-col lg:flex-row gap-4 items-stretch">
     <div class="flex-1 lg:flex-[1.2] group hero-card rounded-4xl p-8 lg:px-12 lg:py-10 border border-slate-100/50 shadow-sm transition-all duration-700 hover:shadow-xl animate-fade-up">
       <div class="relative z-10 flex flex-col h-full justify-between">
         <div class="flex justify-between items-start">
@@ -76,6 +75,7 @@ const initialPosts = allPosts.slice(0, 10);
     </div>
   </section>
   
+  <!-- 近期归档区 -->
   <div class="max-w-6xl mx-auto px-4 flex items-center gap-4 mb-12">
     <div class="h-px flex-1 bg-linear-to-r from-transparent to-blue-600/20 translate-y-0.5"></div>
     <h2 class="text-[24px] lg:text-[32px] font-black uppercase tracking-[0.4em] text-blue-600/50 leading-none select-none animate-fade-up delay-300">
@@ -83,6 +83,7 @@ const initialPosts = allPosts.slice(0, 10);
     </h2>
     <div class="h-px flex-1 bg-linear-to-r from-blue-600/20 to-transparent translate-y-0.5"></div>
   </div>
+
 
   <section class="max-w-6xl mx-auto px-4">
     <div class="post-grid mb-12">
@@ -122,12 +123,6 @@ const initialPosts = allPosts.slice(0, 10);
                     day: 'numeric',
                   })}
                 </time>
-                <span class="reading-time">
-                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  {Math.max(1, Math.ceil(post.description.length / 400))} min read
-                </span>
               </div>
               <span class="read-more-btn">Open Project _</span>
             </div>
@@ -136,7 +131,7 @@ const initialPosts = allPosts.slice(0, 10);
       ))}
     </div>
 
-    <div class="text-center" id="load-more-wrapper">
+    <div class="text-center mb-4" id="load-more-wrapper">
       <button
         id="load-more-btn"
         data-next-page="2"
@@ -147,178 +142,5 @@ const initialPosts = allPosts.slice(0, 10);
       </button>
     </div>
   </section>
-  <script>
-    const btn = document.querySelector('#load-more-btn') as HTMLButtonElement;
-    const container = document.querySelector('.post-grid') as HTMLElement;
-    const wrapper = document.querySelector('#load-more-wrapper') as HTMLElement;
-
-    // 最大加载文章数限制（防止 DOM 过多导致卡顿）
-    const MAX_POSTS = 100;
-    let loadedPosts = 10; // 初始已加载 10 篇
-
-    // 防抖函数 - 防止快速重复点击
-    const debounce = <T extends (...args: any[]) => void>(
-      fn: T,
-      delay: number
-    ): ((...args: Parameters<T>) => void) => {
-      let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-      return (...args: Parameters<T>) => {
-        if (timeoutId) clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => fn(...args), delay);
-      };
-    };
-
-    // 创建骨架屏HTML
-    const createSkeletonHTML = () => `
-      <article class="post-card group">
-        <div class="post-content relative z-10">
-          <div class="skeleton h-6 w-20 rounded-full mb-6"></div>
-          <div class="skeleton h-8 w-3/4 rounded-lg mb-4"></div>
-          <div class="skeleton h-4 w-full rounded mb-2"></div>
-          <div class="skeleton h-4 w-5/6 rounded mb-8"></div>
-          <div class="skeleton h-10 w-full rounded-xl mt-auto"></div>
-        </div>
-      </article>
-    `;
-
-    // 加载更多文章的核心函数
-    const loadMorePosts = async () => {
-      if (!btn || !container || !wrapper) return;
-
-      // 检查是否达到最大文章数
-      if (loadedPosts >= MAX_POSTS) {
-        wrapper.innerHTML = `
-          <p class="text-slate-400 text-sm">
-            已加载 ${loadedPosts} 篇文章，前往
-            <a href="/posts" class="text-blue-600 hover:underline">归档页</a>
-            查看全部
-          </p>
-        `;
-        return;
-      }
-
-      const nextPage = btn.getAttribute('data-next-page') ?? '2';
-
-      // 禁用按钮并更新状态
-      btn.disabled = true;
-      btn.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> 加载中...';
-      btn.classList.add('opacity-70', 'cursor-not-allowed');
-
-      // 显示骨架屏
-      const skeletonsCount = Math.min(3, 6);
-      const skeletonsHTML = Array(skeletonsCount).fill(0).map(() => createSkeletonHTML()).join('');
-      const skeletonContainer = document.createElement('div');
-      skeletonContainer.className = 'skeleton-container grid gap-6';
-      skeletonContainer.style.gridTemplateColumns = 'repeat(auto-fill, minmax(320px, 1fr))';
-      skeletonContainer.innerHTML = skeletonsHTML;
-
-      container.insertAdjacentElement('afterend', skeletonContainer);
-
-      try {
-        const response = await fetch(`/api/posts/${nextPage}.json`);
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        const { posts, hasNext }: { posts: any[], hasNext: boolean } = await response.json();
-
-        // 短暂延迟以显示骨架屏动画
-        await new Promise(resolve => setTimeout(resolve, 600));
-
-        // 移除骨架屏
-        skeletonContainer.remove();
-
-        if (!posts || posts.length === 0) {
-          wrapper.style.display = 'none';
-          return;
-        }
-
-        // 计算本次可以加载的文章数（考虑最大限制）
-        const remainingSlots = MAX_POSTS - loadedPosts;
-        const postsToLoad = Math.min(posts.length, remainingSlots);
-
-        const html = posts.slice(0, postsToLoad).map((post: any) => {
-          const postDate = new Date(post.pubDate).toLocaleDateString('zh-CN', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-          });
-          const readTime = Math.max(1, Math.ceil(post.description.length / 400));
-
-          return `
-            <article class="post-card group opacity-0 translate-y-4" style="animation: fadeUp 0.5s ease-out ${Math.min(index * 0.08, 0.3)}s forwards; content-visibility: auto; contain-intrinsic-size: 0 400px;">
-              <div class="post-content relative z-10">
-                <span class="category-tag">${post.category}</span>
-                ${post.image ? `
-                  <div class="post-thumbnail mb-6">
-                    <img src="${post.image}" alt="${post.title}" loading="lazy" />
-                  </div>
-                ` : ''}
-                <a href="/blog/${post.slug}" class="block group/title">
-                  <h3 class="post-title">${post.title}</h3>
-                </a>
-                <p class="post-description">${post.description}</p>
-                ${post.tags?.length > 0 ? `
-                  <div class="flex flex-wrap gap-2 mt-4 mb-6 relative z-20">
-                    ${post.tags.map((tag: string) => `<span class="text-[10px] uppercase tracking-wider px-2.5 py-1.5 bg-slate-100/80 text-slate-500 rounded-lg hover:bg-blue-500 hover:text-white transition-all duration-300 cursor-default hover:shadow-md hover:shadow-blue-500/20">${tag}</span>`).join('')}
-                  </div>
-                ` : ''}
-                <div class="post-footer">
-                  <div class="flex items-center gap-3">
-                    <time>${postDate}</time>
-                    <span class="reading-time">
-                      <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      ${readTime} min read
-                    </span>
-                  </div>
-                  <span class="read-more-btn">Open Project _</span>
-                </div>
-              </div>
-            </article>
-          `;
-        }).join('');
-
-        container.insertAdjacentHTML('beforeend', html);
-        loadedPosts += postsToLoad;
-
-        // 更新按钮状态
-        if (loadedPosts >= MAX_POSTS) {
-          wrapper.innerHTML = `
-            <p class="text-slate-400 text-sm">
-              已加载 ${loadedPosts} 篇文章，前往
-              <a href="/posts" class="text-blue-600 hover:underline">归档页</a>
-              查看全部
-            </p>
-          `;
-        } else if (!hasNext || postsToLoad < posts.length) {
-          // 没有更多文章或达到最大限制
-          wrapper.style.transition = 'opacity 0.3s ease-out';
-          wrapper.style.opacity = '0';
-          setTimeout(() => wrapper.style.display = 'none', 300);
-        } else {
-          btn.disabled = false;
-          btn.classList.remove('opacity-70', 'cursor-not-allowed');
-          btn.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-blue-500 group-hover:animate-pulse transition-all duration-300"></span> 加载更多`;
-          btn.setAttribute('data-next-page', String(parseInt(nextPage) + 1));
-        }
-      } catch (e) {
-        skeletonContainer?.remove();
-        console.error('加载更多失败:', e);
-        btn.disabled = false;
-        btn.classList.remove('opacity-70', 'cursor-not-allowed');
-        btn.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> 加载失败，点击重试';
-
-        setTimeout(() => {
-          btn.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-blue-500 group-hover:animate-pulse transition-all duration-300"></span> 加载更多';
-        }, 3000);
-      }
-    };
-
-    // 使用防抖包装加载函数（300ms）
-    const debouncedLoadMore = debounce(loadMorePosts, 300);
-    btn?.addEventListener('click', debouncedLoadMore);
-  </script>
+  
 </MainLayout>
