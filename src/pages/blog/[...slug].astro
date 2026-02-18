@@ -68,7 +68,7 @@ const grouppedHeadings = headings.reduce((array, heading) => {
       </div>
 
       <div class="max-w-4xl">
-        <h1 class="text-3xl lg:text-[2.75rem] font-extrabold text-slate-800 leading-[1.25] tracking-tight mb-8">
+        <h1 class="text-4xl lg:text-4xl font-extrabold text-slate-800 leading-[1.25] tracking-tight mb-8">
           {entry.data.title}
         </h1>
         
@@ -84,7 +84,9 @@ const grouppedHeadings = headings.reduce((array, heading) => {
           <div class="flex gap-5">
             {entry.data.tags.slice(0, 3).map(tag => (
               <span class="hover:text-slate-900 transition-colors cursor-pointer transition-all duration-300">
-                #{tag}
+                <a href={`/tags/${tag}`} class="inline-flex items-center gap-1">
+                  #{tag}
+                </a>
               </span>
             ))}
           </div>
@@ -94,7 +96,7 @@ const grouppedHeadings = headings.reduce((array, heading) => {
   </div>
 
   <!-- Flex 左右布局容器 -->
-  <div class="flex gap-6 items-start justify-center py-4" id="content-wrapper">
+  <div class="flex gap-6 items-start justify-center py-6" id="content-wrapper">
     <!-- 左侧：目录（桌面端显示，移动端隐藏） -->
     <div class="hidden lg:block w-[280px] flex-shrink-0 sticky top-[5.5rem]" id="toc-sidebar">
       <div class="toc-header">
