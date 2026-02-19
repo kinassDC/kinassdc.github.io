@@ -3,110 +3,118 @@ import '../styles/global.css';
 import MainLayout from '../layouts/MainLayout.astro';
 ---
 <MainLayout>
+  <!-- 背景装饰 -->
+  <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-blue-100/30 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-100/20 rounded-full blur-3xl"></div>
+  </div>
+
   <!-- 主页英雄区 -->
-  <section class="max-w-6xl mx-auto mt-4 mb-12 flex flex-col lg:flex-row gap-4 items-stretch">
-    <!-- 主卡片 -->
-    <div class="flex-1 lg:flex-[1.2] group hero-card rounded-4xl p-8 lg:px-12 lg:py-10 border border-slate-100/50 shadow-sm transition-all duration-700 hover:shadow-xl animate-fade-up">
-      <div class="relative z-10 flex flex-col h-full justify-between">
-        <!-- 顶部状态栏 -->
-        <div class="flex justify-between items-start">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/90 shadow-md backdrop-blur-sm">
-            <span class="flex h-1.5 w-1.5">
-              <span class="animate-ping absolute inline-flex h-1.5 w-1.5 rounded-full bg-blue-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-400"></span>
-            </span>
-            <span class="text-[8px] font-black text-white uppercase tracking-widest">Active Concept</span>
-          </div>
-          <span class="text-slate-400 font-mono text-[9px] font-bold tracking-wider">EST. 2024</span>
-        </div>
+  <section class="min-h-[80vh] flex items-center justify-center py-16 px-8 sm:px-10 lg:px-12 xl:px-16">
+    <div class="mx-auto text-center">
+      <!-- 顶部标签
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 backdrop-blur-sm border border-slate-200/50 shadow-sm mb-8 animate-fade-up">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+        </span>
+        <span class="text-xs font-medium text-slate-600">欢迎来到派小站</span>
+      </div> -->
 
-        <!-- 标题区 -->
-        <div class="space-y-4 my-20">
-          <h1 class="text-5xl lg:text-7xl font-black tracking-tighter text-slate-800 leading-none">
-            派小站
-          </h1>
-          <p class="text-slate-500 text-sm font-medium max-w-65 leading-relaxed">
-            以<span class="text-slate-900 font-semibold">精密</span>与逻辑，构建理想的数字花园。记录技术与生活的复盘。
-          </p>
-        </div>
+      <!-- 主标题 -->
+      <h1 class="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight text-slate-900 leading-none mb-6 animate-fade-up delay-100 mb-16 sm:mb-12 lg:mb-10 xl:mb-8">
+        数字花园
+        <span class="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mt-2">
+          记录与思考
+        </span>
+      </h1>
 
-        <!-- 底部信息 -->
-        <div class="flex items-end justify-between border-t border-slate-200/60 pt-5">
-          <div class="space-y-0.5">
-            <p class="text-[9px] font-black uppercase tracking-widest text-slate-900">V4 Engine</p>
-            <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Modular System</p>
-          </div>
-          <div class="text-[9px] font-mono text-slate-400 font-bold uppercase tracking-wider">Scenery / 01</div>
+      <!-- 副标题 -->
+      <p class="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-up delay-200 mb-16 sm:mb-12 lg:mb-10 xl:mb-8">
+        以<span class="font-semibold text-slate-900">精密</span>与逻辑，构建理想的知识体系。<br class="hidden sm:block">
+        记录技术探索，分享生活感悟。
+      </p>
+
+      <!-- 分类导航 -->
+      <div class="flex flex-wrap justify-center gap-4 animate-fade-up delay-300 mb-16 sm:mb-12 lg:mb-10 xl:mb-8">
+        <a href="/categories/技术"
+           class="group relative px-8 py-4 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-1 transition-all duration-300">
+          <span class="relative z-10 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+            </svg>
+            技术笔记
+          </span>
+        </a>
+
+        <a href="/categories/生活"
+           class="group relative px-8 py-4 rounded-2xl bg-white border-2 border-slate-200 text-slate-700 font-semibold hover:border-slate-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+          <span class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+            生活随笔
+          </span>
+        </a>
+      </div>
+
+      <!-- 统计信息 -->
+      <div class="flex justify-center gap-8 sm:gap-16 text-center animate-fade-up delay-400 mb-16 sm:mb-12 lg:mb-10 xl:mb-8">
+        <div class="space-y-1">
+          <p class="text-3xl font-bold text-slate-900">10+</p>
+          <p class="text-sm text-slate-500">技术文章</p>
+        </div>
+        <div class="w-px bg-slate-200"></div>
+        <div class="space-y-1">
+          <p class="text-3xl font-bold text-slate-900">5+</p>
+          <p class="text-sm text-slate-500">生活随笔</p>
+        </div>
+        <div class="w-px bg-slate-200"></div>
+        <div class="space-y-1">
+          <p class="text-3xl font-bold text-slate-900">∞</p>
+          <p class="text-sm text-slate-500">持续更新</p>
         </div>
       </div>
-    </div>
-
-    <!-- 分类卡片区 -->
-    <div class="flex-1 lg:flex-[0.8] flex flex-col gap-4">
-      <!-- 技术笔记 -->
-      <a href="/categories/技术" class="flex-1 p-7 lg:p-8 category-card-tech rounded-4xl flex flex-col justify-between group relative transition-all duration-500 hover:-translate-y-2 shadow-lg shadow-blue-200 animate-fade-up delay-100">
-        <div class="flex justify-between items-start z-10">
-          <div class="w-12 h-12 rounded-2xl bg-white/20 border border-white/30 backdrop-blur-md flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-            <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"/></svg>
-          </div>
-          <div class="text-white/30 group-hover:text-white transition-all duration-300 transform group-hover:translate-x-1">
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-          </div>
-        </div>
-        <div class="z-10">
-          <h2 class="text-2xl font-black text-white tracking-tight mb-1">技术笔记</h2>
-          <p class="text-white/70 text-[8px] uppercase tracking-[0.25em] font-bold">Logic & Knowledge</p>
-        </div>
-      </a>
-
-      <!-- 个人随笔 -->
-      <a href="/categories/生活" class="flex-1 p-7 lg:p-8 category-card-life bg-white border border-slate-100 rounded-4xl flex flex-col justify-between group hover:shadow-xl transition-all duration-500 hover:-translate-y-2 animate-fade-up delay-200">
-        <div class="flex justify-between items-start relative z-10">
-          <div class="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-blue-500 group-hover:bg-blue-50 transition-all duration-500 group-hover:scale-110">
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-          </div>
-          <div class="text-slate-300 group-hover:text-slate-900 transition-all duration-300 transform group-hover:translate-x-1">
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-          </div>
-        </div>
-        <div class="relative z-10">
-          <h2 class="text-2xl font-black text-slate-800 tracking-tight mb-1">个人随笔</h2>
-          <p class="text-slate-400 text-[8px] uppercase tracking-[0.25em] font-bold">Insight & Moments</p>
-        </div>
-      </a>
     </div>
   </section>
 
   <!-- 近期文章区 -->
-  <section class="max-w-6xl mx-auto p-4">
-    <div class="flex items-center gap-2 mb-8">
-      <div class="h-px bg-slate-300 mt-1 w-[32px]"></div>
-      <h2 class="text-[24px] lg:text-[32px] font-bold uppercase tracking-[0.4em] text-slate-600 leading-none select-none animate-fade-up delay-300">近期文章</h2>
-      <div class="flex-1 h-px bg-slate-300 mt-1"></div>
-    </div>
-
-    <!-- 文章列表容器 -->
-    <div class="post-grid px-8 mb-4" id="post-grid">
-      <!-- 初始加载状态 -->
-      <div id="loading-state" class="flex flex-col items-center justify-center py-20 text-center">
-        <div class="flex gap-2 mb-4">
-          <span class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
-          <span class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
-          <span class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
-        </div>
-        <p class="text-slate-400 text-sm font-medium">加载文章中...</p>
+  <section class="py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+      <!-- 标题 -->
+      <div class="flex items-center gap-4 mb-12">
+        <div class="h-8 w-1 rounded-full bg-gradient-to-b from-blue-500 to-purple-500"></div>
+        <h2 class="text-2xl sm:text-3xl font-bold text-slate-800">近期文章</h2>
+        <div class="flex-1 h-px bg-slate-200"></div>
+        <span class="text-sm text-slate-400">Latest Posts</span>
       </div>
-    </div>
 
-    <!-- 加载更多按钮 -->
-    <div class="text-center hidden" id="load-more-wrapper">
-      <button
-        id="load-more-btn"
-        class="load-more-btn inline-flex items-center gap-4 px-12 py-4 rounded-full border border-slate-200 text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all duration-500 group"
-      >
-        <span class="w-1.5 h-1.5 rounded-full bg-blue-500 group-hover:animate-pulse transition-all duration-300"></span>
-        <span id="load-more-text">加载更多</span>
-      </button>
+      <!-- 文章列表容器 -->
+      <div class="post-grid" id="post-grid">
+        <!-- 初始加载状态 -->
+        <div id="loading-state" class="col-span-full flex flex-col items-center justify-center py-20 text-center">
+          <div class="flex gap-2 mb-4">
+            <span class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+            <span class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+            <span class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+          </div>
+          <p class="text-slate-400 text-sm font-medium">加载文章中...</p>
+        </div>
+      </div>
+
+      <!-- 加载更多按钮 -->
+      <div class="text-center hidden mt-4" id="load-more-wrapper">
+        <button
+          id="load-more-btn"
+          class="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all duration-300 shadow-sm hover:shadow-lg"
+        >
+          <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+          <span id="load-more-text">加载更多</span>
+          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </button>
+      </div>
     </div>
   </section>
 
@@ -125,7 +133,7 @@ import MainLayout from '../layouts/MainLayout.astro';
           <div class="flex items-center gap-3">
             <time></time>
           </div>
-          <span class="read-more-btn">Open Project _</span>
+          <span class="read-more-btn">阅读更多 →</span>
         </div>
       </div>
     </article>
@@ -245,7 +253,6 @@ import MainLayout from '../layouts/MainLayout.astro';
 
     // 设置日期
     const time = article.querySelector('time') as HTMLElement;
-    // time.dateTime = new Date(post.pubDate).toISOString();
     time.textContent = formatDate(post.pubDate);
 
     return article;
