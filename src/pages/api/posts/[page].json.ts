@@ -6,7 +6,7 @@ export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
   const sortedPosts = allPosts.sort((a, b) => {
     return new Date(b.pubDate).valueOf() - new Date(a.pubDate).valueOf();
   });  // 按发布日期倒序排序
-  return paginate(sortedPosts, { pageSize: 10 });  // 使用 paginate 函数进行分页，每页 10 条数据
+  return paginate(sortedPosts, { pageSize: 9 });  // 使用 paginate 函数进行分页，每页 10 条数据
 };
 
 export const GET: APIRoute = async ({ props }) => {

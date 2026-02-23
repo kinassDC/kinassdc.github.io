@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import BackTop from "../components/BackTop.astro";
 const { title = "派小站" } = Astro.props;
 ---
 
@@ -23,9 +24,7 @@ const { title = "派小站" } = Astro.props;
         </div>
 
         <header class="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-slate-200/50">
-            <div class="max-w-5xl mx-auto px-8">
-                <Nav />
-            </div>
+            <Nav />
         </header>
 
         <main class="mx-auto min-h-[calc(100vh-80px)]">
@@ -39,112 +38,6 @@ const { title = "派小站" } = Astro.props;
         </footer>
 
         <!-- 回到顶部按钮 - 带圆形进度条 -->
-        <button
-            id="back-to-top"
-            aria-label="回到顶部"
-            class="fixed bottom-8 right-8 w-14 h-14 bg-white border-2 border-slate-200 rounded-full shadow-xl flex items-center justify-center hover:border-blue-500 hover:shadow-2xl hover:scale-110 transition-all duration-300 opacity-0 invisible z-50 group"
-        >
-            <svg class="absolute w-full h-full -rotate-90" viewBox="0 0 56 56">
-                <!-- 背景圆环 -->
-                <circle
-                    cx="28"
-                    cy="28"
-                    r="24"
-                    fill="none"
-                    stroke="#e2e8f0"
-                    stroke-width="3"
-                />
-                <!-- 进度圆环 -->
-                <circle
-                    id="progress-circle"
-                    cx="28"
-                    cy="28"
-                    r="24"
-                    fill="none"
-                    stroke="url(#gradient)"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-dasharray="150.79"
-                    stroke-dashoffset="150.79"
-                    class="transition-all duration-150 ease-out"
-                />
-                <!-- 渐变定义 -->
-                <defs>
-                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#3b82f6" />
-                        <stop offset="100%" stop-color="#06b6d4" />
-                    </linearGradient>
-                </defs>
-            </svg>
-            <!-- 中心箭头图标 -->
-            <svg class="w-6 h-6 text-slate-600 group-hover:text-blue-600 transition-colors duration-300 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-            </svg>
-        </button>
-
-        <script is:inline define:vars={{ CIRCUMFERENCE: 150.79 }}>
-            const backToTopBtn = document.getElementById('back-to-top');
-            const progressCircle = document.getElementById('progress-circle');
-            let lastScrollTop = 0;
-
-            // 更新进度圆环
-            function updateProgress() {
-                const scrollTop = window.scrollY;
-                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-                const scrollPercent = scrollTop / docHeight;
-                const offset = CIRCUMFERENCE - (scrollPercent * CIRCUMFERENCE);
-                progressCircle.style.strokeDashoffset = offset;
-            }
-
-            // 显示/隐藏按钮
-            function toggleButton() {
-                const scrollTop = window.scrollY;
-
-                // 向下滚动超过 200px 时显示
-                if (scrollTop > 200) {
-                    backToTopBtn.classList.remove('opacity-0', 'invisible');
-                    backToTopBtn.classList.add('opacity-100', 'visible');
-                } else {
-                    backToTopBtn.classList.add('opacity-0', 'invisible');
-                    backToTopBtn.classList.remove('opacity-100', 'visible');
-                }
-
-                lastScrollTop = scrollTop;
-            }
-
-            // 滚动到顶部
-            function scrollToTop() {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            }
-
-            // 节流函数
-            function throttle(func, wait) {
-                let timeout;
-                return function executedFunction(...args) {
-                    const later = () => {
-                        clearTimeout(timeout);
-                        func(...args);
-                    };
-                    clearTimeout(timeout);
-                    timeout = setTimeout(later, wait);
-                };
-            }
-
-            // 监听滚动事件
-            window.addEventListener('scroll', throttle(() => {
-                toggleButton();
-                updateProgress();
-            }, 50));
-
-            // 点击回到顶部
-            backToTopBtn.addEventListener('click', scrollToTop);
-
-            // 初始化
-            toggleButton();
-            updateProgress();
-        </script>
+        <BackTop />
     </body>
 </html>

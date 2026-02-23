@@ -194,14 +194,21 @@
   .delay-500 { animation-delay: 0.5s; }
 }
 @layer components {
-  /* 网格布局：两列布局 */
+  /* 网格布局：响应式三列布局 */
   .post-grid {
     @apply grid gap-6;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
-  /* 移动端：单列布局 */
-  @media (max-width: 768px) {
+  /* 平板：两列 */
+  @media (max-width: 1024px) {
+    .post-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* 移动端：单列 */
+  @media (max-width: 640px) {
     .post-grid {
       grid-template-columns: 1fr;
     }
