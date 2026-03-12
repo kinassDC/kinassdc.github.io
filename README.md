@@ -42,7 +42,7 @@ project1/
 │       └── global.css        # Tailwind + 自定义样式
 ├── public/                   # 静态资源
 │   ├── bg.png                # 背景图片
-│   └── favicon.svg           # 网站图标
+│   └── favicon.icon           # 网站图标
 ├── astro.config.mjs          # Astro 配置文件
 ├── package.json              # 项目依赖
 └── tsconfig.json             # TypeScript 配置
