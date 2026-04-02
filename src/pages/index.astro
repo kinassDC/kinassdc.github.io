@@ -10,70 +10,38 @@ import MainLayout from '../layouts/MainLayout.astro';
   </div>
 
   <!-- 主页英雄区 -->
-  <section class="min-h-[80vh] flex items-center justify-center py-16 px-8 sm:px-10 lg:px-12 xl:px-16">
-    <div class="mx-auto text-center">
-      <!-- 顶部标签
-      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 backdrop-blur-sm border border-slate-200/50 shadow-sm mb-8 animate-fade-up">
-        <span class="relative flex h-2 w-2">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-        </span>
-        <span class="text-xs font-medium text-slate-600">欢迎来到派小站</span>
-      </div> -->
-
-      <!-- 主标题 -->
-      <h1 class="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight text-slate-900 leading-none mb-6 animate-fade-up delay-100 mb-16 sm:mb-12 lg:mb-10 xl:mb-8">
-        数字花园
-        <span class="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mt-2">
-          记录与思考
-        </span>
-      </h1>
-
-      <!-- 副标题 -->
-      <p class="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-up delay-200 mb-16 sm:mb-12 lg:mb-10 xl:mb-8">
-        以<span class="font-semibold text-slate-900">精密</span>与逻辑，构建理想的知识体系。<br class="hidden sm:block">
-        记录技术探索，分享生活感悟。
-      </p>
-
-      <!-- 分类导航 -->
-      <div class="flex flex-wrap justify-center gap-4 animate-fade-up delay-300 mb-16 sm:mb-12 lg:mb-10 xl:mb-8">
-        <a href="/categories/技术"
-           class="group relative px-8 py-4 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-1 transition-all duration-300">
-          <span class="relative z-10 flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+  <section class="min-h-[80vh] flex items-center py-16 px-8 sm:px-10 lg:px-12 xl:px-16">
+    <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
+      <!-- 左侧：标题区域 (2/5) -->
+      <div class="lg:col-span-2 space-y-8">
+        <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 animate-fade-up">
+          派小站
+        </h1>
+        <p class="text-lg text-slate-600 leading-relaxed animate-fade-up delay-100">
+          记录技术探索，分享生活感悟。每篇文章都是知识网络中的一个节点。
+        </p>
+        <div class="flex flex-wrap gap-4 animate-fade-up delay-200">
+          <a
+            href="/posts"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-full font-medium hover:bg-slate-800 transition-colors duration-200"
+          >
+            浏览文章
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
-            技术笔记
-          </span>
-        </a>
-
-        <a href="/categories/生活"
-           class="group relative px-8 py-4 rounded-2xl bg-white border-2 border-slate-200 text-slate-700 font-semibold hover:border-slate-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-          <span class="flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-            生活随笔
-          </span>
-        </a>
+          </a>
+          <a
+            href="/about"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-700 rounded-full font-medium border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all duration-200"
+          >
+            了解更多
+          </a>
+        </div>
       </div>
 
-      <!-- 统计信息 -->
-      <div class="flex justify-center gap-8 sm:gap-16 text-center animate-fade-up delay-400 mb-16 sm:mb-12 lg:mb-10 xl:mb-8">
-        <div class="space-y-1">
-          <p class="text-3xl font-bold text-slate-900">10+</p>
-          <p class="text-sm text-slate-500">技术文章</p>
-        </div>
-        <div class="w-px bg-slate-200"></div>
-        <div class="space-y-1">
-          <p class="text-3xl font-bold text-slate-900">5+</p>
-          <p class="text-sm text-slate-500">生活随笔</p>
-        </div>
-        <div class="w-px bg-slate-200"></div>
-        <div class="space-y-1">
-          <p class="text-3xl font-bold text-slate-900">∞</p>
-          <p class="text-sm text-slate-500">持续更新</p>
-        </div>
+      <!-- 右侧：粒子节点网络 (3/5) -->
+      <div class="lg:col-span-3 relative h-[500px] animate-fade-up delay-300" id="particle-container">
+        <!-- 粒子和连接线将通过 JavaScript 动态生成 -->
       </div>
     </div>
   </section>
@@ -141,6 +109,152 @@ import MainLayout from '../layouts/MainLayout.astro';
 </MainLayout>
 
 <script>
+  // ============================================================================
+  // 粒子节点系统
+  // ============================================================================
+  interface ParticlePost {
+    title: string;
+    slug: string;
+    category: string;
+  }
+
+  // 初始化粒子节点
+  const initParticles = async (): Promise<void> => {
+    const container = document.getElementById('particle-container');
+    if (!container) return;
+
+    try {
+      // 获取最新的文章数据
+      const response = await fetch('/api/posts/1.json');
+      if (!response.ok) throw new Error('Failed to load posts');
+
+      const data = await response.json();
+      const posts: ParticlePost[] = data.posts.slice(0, 12); // 取前12篇
+
+      // 清空容器
+      container.innerHTML = '';
+
+      // 创建 SVG 用于绘制连接线
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('class', 'absolute inset-0 w-full h-full pointer-events-none');
+      svg.style.zIndex = '0';
+      container.appendChild(svg);
+
+      // 生成粒子位置（避免重叠）
+      const particles: Array<{ x: number; y: number; post: ParticlePost }> = [];
+      const containerRect = container.getBoundingClientRect();
+      const padding = 60;
+      const minDistance = 80;
+
+      for (const post of posts) {
+        let x: number;
+        let y: number;
+        let attempts = 0;
+        const maxAttempts = 100;
+
+        do {
+          x = padding + Math.random() * (containerRect.width - padding * 2);
+          y = padding + Math.random() * (containerRect.height - padding * 2);
+          attempts++;
+        } while (
+          attempts < maxAttempts &&
+          particles.some((p) => Math.hypot(p.x - x, p.y - y) < minDistance)
+        );
+
+        particles.push({ x, y, post });
+      }
+
+      // 创建粒子元素
+      particles.forEach((particle, index) => {
+        const node = document.createElement('a');
+        node.href = `/blog/${particle.post.slug}`;
+        node.className = 'particle-node absolute flex items-center justify-center rounded-full cursor-pointer transition-all duration-300 hover:z-20';
+        node.style.left = `${particle.x}px`;
+        node.style.top = `${particle.y}px`;
+        node.style.width = '16px';
+        node.style.height = '16px';
+        node.style.transform = 'translate(-50%, -50%)';
+        node.style.zIndex = '10';
+
+        // 根据分类设置颜色
+        const isTech = particle.post.category === '技术';
+        const baseColor = isTech ? 'bg-blue-500' : 'bg-pink-500';
+
+        node.innerHTML = `
+          <div class="${baseColor} w-3 h-3 rounded-full shadow-lg transition-all duration-300 hover:scale-150"></div>
+          <div class="particle-tooltip absolute opacity-0 pointer-events-none transition-opacity duration-200 bg-slate-900 text-white text-sm px-3 py-2 rounded-lg whitespace-nowrap shadow-xl" style="top: -40px; left: 50%; transform: translateX(-50%);">
+            ${particle.post.title}
+            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-2 h-2 bg-slate-900 rotate-45"></div>
+          </div>
+        `;
+
+        // 悬浮显示 tooltip
+        node.addEventListener('mouseenter', () => {
+          const tooltip = node.querySelector('.particle-tooltip') as HTMLElement;
+          const dot = node.querySelector('.w-3') as HTMLElement;
+          if (tooltip) tooltip.style.opacity = '1';
+          if (dot) dot.style.transform = 'scale(1.5)';
+        });
+
+        node.addEventListener('mouseleave', () => {
+          const tooltip = node.querySelector('.particle-tooltip') as HTMLElement;
+          const dot = node.querySelector('.w-3') as HTMLElement;
+          if (tooltip) tooltip.style.opacity = '0';
+          if (dot) dot.style.transform = 'scale(1)';
+        });
+
+        // 浮动动画
+        const floatAnimation = `
+          @keyframes float-${index} {
+            0%, 100% { transform: translate(-50%, -50%) translate(0, 0); }
+            25% { transform: translate(-50%, -50%) translate(${Math.random() * 10 - 5}px, ${Math.random() * 10 - 5}px); }
+            50% { transform: translate(-50%, -50%) translate(${Math.random() * 10 - 5}px, ${Math.random() * 10 - 5}px); }
+            75% { transform: translate(-50%, -50%) translate(${Math.random() * 10 - 5}px, ${Math.random() * 10 - 5}px); }
+          }
+        `;
+        const style = document.createElement('style');
+        style.textContent = floatAnimation;
+        document.head.appendChild(style);
+
+        node.style.animation = `float-${index} ${8 + Math.random() * 4}s ease-in-out infinite`;
+        node.style.animationDelay = `${Math.random() * 2}s`;
+
+        container.appendChild(node);
+      });
+
+      // 绘制连接线
+      particles.forEach((p1, i) => {
+        particles.forEach((p2, j) => {
+          if (i >= j) return;
+          const distance = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+
+          // 只连接距离较近的粒子
+          if (distance < 180) {
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', p1.x.toString());
+            line.setAttribute('y1', p1.y.toString());
+            line.setAttribute('x2', p2.x.toString());
+            line.setAttribute('y2', p2.y.toString());
+            line.setAttribute('stroke', '#e2e8f0');
+            line.setAttribute('stroke-width', '1');
+            line.style.opacity = `${1 - distance / 180}`;
+            svg.appendChild(line);
+          }
+        });
+      });
+
+    } catch (error) {
+      console.error('Error initializing particles:', error);
+    }
+  };
+
+  // 页面加载后初始化粒子
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initParticles);
+  } else {
+    initParticles();
+  }
+
   // ============================================================================
   // 类型定义
   // ============================================================================
