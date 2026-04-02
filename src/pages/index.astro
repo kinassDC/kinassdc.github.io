@@ -40,7 +40,7 @@ import MainLayout from '../layouts/MainLayout.astro';
       </div>
 
       <!-- 右侧：粒子节点网络 (3/5) -->
-      <div class="lg:col-span-3 relative h-[500px] animate-fade-up delay-300 overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 to-slate-100" id="particle-container">
+      <div class="lg:col-span-3 relative h-[500px] animate-fade-up delay-300" id="particle-container">
         <!-- 星空背景层 -->
         <div class="absolute inset-0 pointer-events-none" id="starfield"></div>
         <!-- 粒子和连接线将通过 JavaScript 动态生成 -->
@@ -190,7 +190,7 @@ import MainLayout from '../layouts/MainLayout.astro';
       }
 
       // 创建粒子元素
-      particles.forEach((particle, index) => {
+      particles.forEach((particle) => {
         const node = document.createElement('a');
         node.href = `/blog/${particle.post.slug}`;
         node.className = 'particle-node absolute flex items-center justify-center rounded-full cursor-pointer transition-all duration-500 hover:z-20';
@@ -208,16 +208,23 @@ import MainLayout from '../layouts/MainLayout.astro';
 
         // 创建 3D 球体粒子
         node.innerHTML = `
-          <div class="particle-sphere relative w-2.5 h-2.5 rounded-full animate-pulse"
+          <div class="particle-sphere relative w-2.5 h-2.5 rounded-full"
                style="
-                 background: radial-gradient(circle at 30% 30%, ${baseColor}, ${glowColor});
+                 background: radial-gradient(circle at 35% 35%,
+                   rgba(255, 255, 255, 0.9) 0%,
+                   ${baseColor} 20%,
+                   ${glowColor} 60%,
+                   rgba(0, 0, 0, 0.3) 100%
+                 );
                  box-shadow:
-                   0 0 10px ${glowColor},
-                   0 0 20px ${glowColor},
-                   0 0 30px ${glowColor},
-                   inset 0 0 4px rgba(255, 255, 255, 0.3);
+                   0 0 8px ${glowColor},
+                   0 0 16px ${glowColor},
+                   0 0 24px ${glowColor},
+                   inset -2px -2px 6px rgba(0, 0, 0, 0.4),
+                   inset 2px 2px 6px rgba(255, 255, 255, 0.3);
                  animation: pulse-glow ${2 + Math.random()}s ease-in-out infinite;
                ">
+            <div class="absolute top-1 left-1 w-1 h-1 bg-white rounded-full opacity-80 blur-[0.5px]"></div>
           </div>
           <div class="particle-tooltip absolute opacity-0 pointer-events-none transition-all duration-300 bg-slate-900/95 backdrop-blur-sm text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap shadow-xl border border-slate-700" style="top: -45px; left: 50%; transform: translateX(-50%) scale(0.9);">
             ${particle.post.title}
@@ -236,10 +243,11 @@ import MainLayout from '../layouts/MainLayout.astro';
           if (sphere) {
             sphere.style.transform = 'scale(1.5)';
             sphere.style.boxShadow = `
-              0 0 15px ${glowColor},
-              0 0 30px ${glowColor},
-              0 0 45px ${glowColor},
-              inset 0 0 6px rgba(255, 255, 255, 0.5)
+              0 0 12px ${glowColor},
+              0 0 24px ${glowColor},
+              0 0 36px ${glowColor},
+              inset -3px -3px 8px rgba(0, 0, 0, 0.5),
+              inset 3px 3px 8px rgba(255, 255, 255, 0.4)
             `;
           }
         });
@@ -254,10 +262,11 @@ import MainLayout from '../layouts/MainLayout.astro';
           if (sphere) {
             sphere.style.transform = 'scale(1)';
             sphere.style.boxShadow = `
-              0 0 10px ${glowColor},
-              0 0 20px ${glowColor},
-              0 0 30px ${glowColor},
-              inset 0 0 4px rgba(255, 255, 255, 0.3)
+              0 0 8px ${glowColor},
+              0 0 16px ${glowColor},
+              0 0 24px ${glowColor},
+              inset -2px -2px 6px rgba(0, 0, 0, 0.4),
+              inset 2px 2px 6px rgba(255, 255, 255, 0.3)
             `;
           }
         });
