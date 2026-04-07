@@ -3,84 +3,183 @@ import '../styles/global.css';
 import MainLayout from '../layouts/MainLayout.astro';
 ---
 <MainLayout>
-  <!-- 背景装饰 -->
+  <!-- 极简装饰背景 -->
   <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-    <div class="absolute top-0 left-1/4 w-96 h-96 bg-blue-100/30 rounded-full blur-3xl"></div>
-    <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-100/20 rounded-full blur-3xl"></div>
+    <div class="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-gradient-to-br from-slate-100/40 to-transparent rounded-full blur-3xl"></div>
+    <div class="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] bg-gradient-to-tr from-slate-50/60 to-transparent rounded-full blur-3xl"></div>
   </div>
 
-  <!-- 主页英雄区 -->
-  <section class="min-h-[80vh] flex items-center py-16 px-8 sm:px-10 lg:px-12 xl:px-16">
-    <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
-      <!-- 左侧：标题区域 (2/5) -->
-      <div class="lg:col-span-2 space-y-8">
-        <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 animate-fade-up">
-          派小站
-        </h1>
-        <p class="text-lg text-slate-600 leading-relaxed animate-fade-up delay-100">
-          记录技术探索，分享生活感悟。每篇文章都是知识网络中的一个节点。
+  <!-- 主页英雄区 - 杂志风格左右分栏 -->
+  <section class="min-h-[calc(100vh-80px)] py-16 px-6 lg:px-12 flex flex-col justify-center">
+    <div class="max-w-7xl mx-auto w-full flex flex-col lg:flex-row gap-8 lg:gap-10">
+      <!-- 左侧：网站概括 -->
+      <div class="flex-1 pl-12 pr-4 space-y-5">
+        <!-- 顶部标签 -->
+        <div class="animate-fade-up">
+          <div class="inline-flex items-center gap-3 px-4 py-2 bg-slate-900/5 border border-slate-200/60 rounded-full">
+            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+            <span class="text-xs font-semibold tracking-widest uppercase text-slate-600">Now Online</span>
+          </div>
+        </div>
+
+        <!-- 主标题区 -->
+        <div class="space-y-3 animate-fade-up delay-100">
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 tracking-tight leading-[1.1]">
+            派小站
+            <span class="block text-base sm:text-lg lg:text-xl font-semibold text-slate-400 mt-2">探索技术与生活的边界</span>
+          </h1>
+          <div class="flex items-center gap-4 text-slate-400">
+            <span class="text-sm font-medium tracking-wide">Personal Blog</span>
+            <span class="w-px h-4 bg-slate-300"></span>
+            <span class="text-sm">Since 2024</span>
+          </div>
+        </div>
+
+        <!-- 描述文字 -->
+        <p class="text-base text-slate-500 leading-relaxed max-w-lg animate-fade-up delay-200">
+          这里是我记录技术探索、分享生活思考的个人空间。深入前端技术，触及生活哲学，在代码与文字间寻找平衡。
         </p>
-        <div class="flex flex-wrap gap-4 animate-fade-up delay-200">
+
+        <!-- CTA按钮 -->
+        <div class="flex flex-wrap items-center gap-4 animate-fade-up delay-300">
           <a
             href="/posts"
-            class="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-full font-medium hover:bg-slate-800 transition-colors duration-200"
+            class="group inline-flex items-center gap-3 px-6 py-3 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition-all duration-300 hover:shadow-xl hover:shadow-slate-900/20 hover:-translate-y-0.5 text-sm"
           >
-            浏览文章
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            开始阅读
+            <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </a>
           <a
             href="/about"
-            class="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-700 rounded-full font-medium border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all duration-200"
+            class="inline-flex items-center gap-2 px-6 py-4 text-slate-600 font-medium hover:text-slate-900 transition-colors duration-300 text-sm"
           >
             了解更多
           </a>
         </div>
+
+        <!-- 快速统计 -->
+        <div class="flex items-center gap-8 pt-5 animate-fade-up delay-400">
+          <div class="space-y-1">
+            <div class="text-2xl font-bold text-slate-900">25+</div>
+            <div class="text-xs text-slate-400 uppercase tracking-wider">篇文章</div>
+          </div>
+          <div class="space-y-1">
+            <div class="text-2xl font-bold text-slate-900">2</div>
+            <div class="text-xs text-slate-400 uppercase tracking-wider">个分类</div>
+          </div>
+          <div class="space-y-1">
+            <div class="text-2xl font-bold text-slate-900">4.8k</div>
+            <div class="text-xs text-slate-400 uppercase tracking-wider">次访问</div>
+          </div>
+        </div>
       </div>
 
-      <!-- 右侧：粒子节点网络 (3/5) -->
-      <div class="lg:col-span-3 relative h-[500px] animate-fade-up delay-300" id="particle-container">
-        <!-- 星空背景层 -->
-        <div class="absolute inset-0 pointer-events-none" id="starfield"></div>
-        <!-- 粒子和连接线将通过 JavaScript 动态生成 -->
+      <!-- 右侧：功能卡片 -->
+      <div class="lg:w-[45%] pl-4 pr-12 space-y-4 animate-fade-up delay-200">
+        <div class="text-xs font-semibold tracking-widest uppercase text-slate-400 mb-5">Core Features</div>
+
+        <!-- 功能卡片网格 -->
+        <div class="grid grid-cols-2 gap-4">
+          <!-- 卡片1 -->
+          <div class="group p-5 bg-white border border-slate-200/60 rounded-2xl hover:border-slate-300 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500 hover:-translate-y-1 cursor-pointer">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+              </svg>
+            </div>
+            <h3 class="text-sm font-bold text-slate-900 mb-1">技术文章</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">深入前端技术栈，分享实战经验</p>
+          </div>
+
+          <!-- 卡片2 -->
+          <div class="group p-5 bg-white border border-slate-200/60 rounded-2xl hover:border-slate-300 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500 hover:-translate-y-1 cursor-pointer">
+            <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </div>
+            <h3 class="text-sm font-bold text-slate-900 mb-1">生活感悟</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">记录日常思考，探索生活美学</p>
+          </div>
+
+          <!-- 卡片3 -->
+          <div class="group p-5 bg-white border border-slate-200/60 rounded-2xl hover:border-slate-300 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500 hover:-translate-y-1 cursor-pointer">
+            <div class="w-12 h-12 bg-gradient-to-br from-violet-500 to-violet-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <h3 class="text-sm font-bold text-slate-900 mb-1">快速搜索</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">全站内容检索，快速找到目标</p>
+          </div>
+
+          <!-- 卡片4 -->
+          <div class="group p-5 bg-white border border-slate-200/60 rounded-2xl hover:border-slate-300 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-500 hover:-translate-y-1 cursor-pointer">
+            <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 class="text-sm font-bold text-slate-900 mb-1">时间线</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">按时间浏览，追溯创作历程</p>
+          </div>
+        </div>
+
+        <!-- 底部提示 -->
+        <div class="mt-5 p-4 bg-slate-50/80 border border-slate-100 rounded-xl flex items-center gap-3">
+          <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            更多功能正在开发中，敬请期待...
+          </p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- 近期文章区 -->
-  <section class="py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
+  <!-- 近期文章区 - 简化设计 -->
+  <section class="py-6 px-6">
     <div class="max-w-6xl mx-auto">
-      <!-- 标题 -->
-      <div class="flex items-center gap-4 mb-12">
-        <div class="h-8 w-1 rounded-full bg-gradient-to-b from-blue-500 to-purple-500"></div>
-        <h2 class="text-2xl sm:text-3xl font-bold text-slate-800">近期文章</h2>
-        <div class="flex-1 h-px bg-slate-200"></div>
-        <span class="text-sm text-slate-400">Latest Posts</span>
+      <!-- 标题区域 - 极简 -->
+      <div class="flex items-end justify-between mb-6">
+        <div>
+          <h2 class="text-3xl font-bold text-slate-900 mb-2">近期文章</h2>
+          <p class="text-slate-400 text-sm">Latest thoughts & explorations</p>
+        </div>
+        <a href="/posts" class="hidden sm:flex items-center gap-2 text-sm text-slate-400 hover:text-slate-600 transition-colors duration-300">
+          查看全部
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
       </div>
 
       <!-- 文章列表容器 -->
       <div class="post-grid" id="post-grid">
         <!-- 初始加载状态 -->
-        <div id="loading-state" class="col-span-full flex flex-col items-center justify-center py-20 text-center">
+        <div id="loading-state" class="col-span-full flex flex-col items-center justify-center py-12 text-center">
           <div class="flex gap-2 mb-4">
-            <span class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
-            <span class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
-            <span class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+            <span class="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+            <span class="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+            <span class="w-2 h-2 bg-slate-300 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
           </div>
           <p class="text-slate-400 text-sm font-medium">加载文章中...</p>
         </div>
       </div>
 
       <!-- 加载更多按钮 -->
-      <div class="text-center hidden mt-4" id="load-more-wrapper">
+      <div class="text-center hidden mt-8" id="load-more-wrapper">
         <button
           id="load-more-btn"
-          class="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all duration-300 shadow-sm hover:shadow-lg"
+          class="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all duration-300 overflow-hidden"
         >
-          <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-          <span id="load-more-text">加载更多</span>
-          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <span class="relative z-10" id="load-more-text">加载更多</span>
+          <svg class="w-4 h-4 relative z-10 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
           </svg>
         </button>
@@ -111,202 +210,6 @@ import MainLayout from '../layouts/MainLayout.astro';
 </MainLayout>
 
 <script>
-  // ============================================================================
-  // 粒子节点系统
-  // ============================================================================
-  interface ParticlePost {
-    title: string;
-    slug: string;
-    category: string;
-  }
-
-  // 初始化粒子节点
-  const initParticles = async (): Promise<void> => {
-    const container = document.getElementById('particle-container');
-    const starfield = document.getElementById('starfield');
-    if (!container || !starfield) return;
-
-    try {
-      // 获取最新的文章数据
-      const response = await fetch('/api/posts/1.json');
-      if (!response.ok) throw new Error('Failed to load posts');
-
-      const data = await response.json();
-      const posts: ParticlePost[] = data.posts.slice(0, 25); // 取前25篇
-
-      // 创建星空背景
-      const starCount = 80;
-      for (let i = 0; i < starCount; i++) {
-        const star = document.createElement('div');
-        star.className = 'absolute rounded-full bg-white';
-        star.style.width = `${Math.random() * 2 + 1}px`;
-        star.style.height = star.style.width;
-        star.style.left = `${Math.random() * 100}%`;
-        star.style.top = `${Math.random() * 100}%`;
-        star.style.opacity = `${Math.random() * 0.5 + 0.2}`;
-        star.style.animation = `twinkle ${Math.random() * 3 + 2}s ease-in-out infinite`;
-        star.style.animationDelay = `${Math.random() * 2}s`;
-        starfield.appendChild(star);
-      }
-
-      // 添加闪烁动画
-      const twinkleStyle = document.createElement('style');
-      twinkleStyle.textContent = `
-        @keyframes twinkle {
-          0%, 100% { opacity: 0.2; }
-          50% { opacity: 0.8; }
-        }
-      `;
-      document.head.appendChild(twinkleStyle);
-
-      // 创建 SVG 用于绘制连接线
-      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      svg.setAttribute('class', 'absolute inset-0 w-full h-full pointer-events-none');
-      svg.style.zIndex = '1';
-      container.appendChild(svg);
-
-      // 生成粒子位置（避免重叠）
-      const particles: Array<{ x: number; y: number; post: ParticlePost }> = [];
-      const containerRect = container.getBoundingClientRect();
-      const padding = 40;
-      const minDistance = 25;
-
-      for (const post of posts) {
-        let x: number;
-        let y: number;
-        let attempts = 0;
-        const maxAttempts = 100;
-
-        do {
-          x = padding + Math.random() * (containerRect.width - padding * 2);
-          y = padding + Math.random() * (containerRect.height - padding * 2);
-          attempts++;
-        } while (
-          attempts < maxAttempts &&
-          particles.some((p) => Math.hypot(p.x - x, p.y - y) < minDistance)
-        );
-
-        particles.push({ x, y, post });
-      }
-
-      // 创建粒子元素
-      particles.forEach((particle) => {
-        const node = document.createElement('a');
-        node.href = `/blog/${particle.post.slug}`;
-        node.className = 'particle-node absolute rounded-full cursor-pointer transition-all duration-300 hover:z-20';
-        node.style.left = `${particle.x}px`;
-        node.style.top = `${particle.y}px`;
-        node.style.width = '5px';
-        node.style.height = '5px';
-        node.style.transform = 'translate(-50%, -50%)';
-        node.style.zIndex = '10';
-
-        // 根据分类设置颜色
-        const isTech = particle.post.category === '技术';
-        const color = isTech ? '#3b82f6' : '#ec4899';
-
-        // 简单的圆点
-        node.style.backgroundColor = color;
-
-        // 添加 tooltip
-        node.innerHTML = `
-          <div class="particle-tooltip absolute opacity-0 pointer-events-none transition-opacity duration-200 bg-slate-900/95 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap shadow-lg" style="top: -40px; left: 50%; transform: translateX(-50%);">
-            ${particle.post.title}
-            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-2 h-2 bg-slate-900/95 rotate-45"></div>
-          </div>
-        `;
-
-        // 悬浮显示 tooltip
-        node.addEventListener('mouseenter', () => {
-          const tooltip = node.querySelector('.particle-tooltip') as HTMLElement;
-          if (tooltip) tooltip.style.opacity = '1';
-          node.style.transform = 'translate(-50%, -50%) scale(1.5)';
-        });
-
-        node.addEventListener('mouseleave', () => {
-          const tooltip = node.querySelector('.particle-tooltip') as HTMLElement;
-          if (tooltip) tooltip.style.opacity = '0';
-          node.style.transform = 'translate(-50%, -50%) scale(1)';
-        });
-
-        // 浮动动画
-        const floatDuration = 10 + Math.random() * 5;
-        node.style.animation = `float-gentle ${floatDuration}s ease-in-out infinite`;
-        node.style.animationDelay = `${Math.random() * 3}s`;
-
-        container.appendChild(node);
-      });
-
-      // 添加浮动动画
-      const floatStyle = document.createElement('style');
-      floatStyle.textContent = `
-        @keyframes float-gentle {
-          0%, 100% {
-            transform: translate(-50%, -50%) translate(0, 0);
-          }
-          25% {
-            transform: translate(-50%, -50%) translate(-15px, -10px);
-          }
-          50% {
-            transform: translate(-50%, -50%) translate(10px, 15px);
-          }
-          75% {
-            transform: translate(-50%, -50%) translate(-10px, 10px);
-          }
-        }
-      `;
-      document.head.appendChild(floatStyle);
-
-      // 绘制渐变连接线
-      particles.forEach((p1, i) => {
-        particles.forEach((p2, j) => {
-          if (i >= j) return;
-          const distance = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-
-          // 只连接距离较近的粒子
-          if (distance < 160) {
-            const gradientId = `gradient-${i}-${j}`;
-            const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
-            gradient.setAttribute('id', gradientId);
-            gradient.setAttribute('gradientUnits', 'userSpaceOnUse');
-
-            const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-            stop1.setAttribute('offset', '0%');
-            stop1.setAttribute('stop-color', p1.post.category === '技术' ? '#3b82f6' : '#ec4899');
-
-            const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-            stop2.setAttribute('offset', '100%');
-            stop2.setAttribute('stop-color', p2.post.category === '技术' ? '#3b82f6' : '#ec4899');
-
-            gradient.appendChild(stop1);
-            gradient.appendChild(stop2);
-            svg.appendChild(gradient);
-
-            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line.setAttribute('x1', p1.x.toString());
-            line.setAttribute('y1', p1.y.toString());
-            line.setAttribute('x2', p2.x.toString());
-            line.setAttribute('y2', p2.y.toString());
-            line.setAttribute('stroke', `url(#${gradientId})`);
-            line.setAttribute('stroke-width', '0.5');
-            line.style.opacity = `${(1 - distance / 160) * 0.4}`;
-            svg.appendChild(line);
-          }
-        });
-      });
-
-    } catch (error) {
-      console.error('Error initializing particles:', error);
-    }
-  };
-
-  // 页面加载后初始化粒子
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initParticles);
-  } else {
-    initParticles();
-  }
-
   // ============================================================================
   // 类型定义
   // ============================================================================
@@ -349,7 +252,7 @@ import MainLayout from '../layouts/MainLayout.astro';
   // ============================================================================
   // 工具函数
   // ============================================================================
-  const TAG_CLASS = 'text-[10px] uppercase tracking-wider px-2.5 py-1.5 bg-slate-100/80 text-slate-500 rounded-lg hover:bg-blue-500 hover:text-white transition-all duration-300 cursor-default hover:shadow-md hover:shadow-blue-500/20';
+  const TAG_CLASS = 'text-[10px] uppercase tracking-wider px-2.5 py-1.5 bg-slate-100/80 text-slate-500 rounded-lg hover:bg-slate-900 hover:text-white transition-all duration-300 cursor-default';
   const TAG_LINK_CLASS = 'no-underline';
 
   // 格式化日期
@@ -446,7 +349,7 @@ import MainLayout from '../layouts/MainLayout.astro';
   const showError = (): void => {
     elements.loadingState.innerHTML = `
       <p class="text-red-400 text-sm mb-4">加载失败</p>
-      <button onclick="location.reload()" class="text-blue-500 hover:underline text-sm">重试</button>
+      <button onclick="location.reload()" class="text-slate-600 hover:underline text-sm">重试</button>
     `;
   };
 

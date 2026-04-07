@@ -214,60 +214,93 @@
     }
   }
 
-  /* 文章卡片基础：双层容器结构 */
+  /* 文章卡片基础：现代玻璃态设计 */
   .post-card {
-    @apply bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden
-           transition-all duration-700 flex flex-col relative p-2;
+    @apply bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl overflow-hidden
+           transition-all duration-500 flex flex-col relative p-2 hover:border-slate-300;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%);
   }
 
   .post-card:hover {
-    @apply border-blue-500/20 -translate-y-2 shadow-2xl shadow-blue-500/5;
+    @apply -translate-y-2 shadow-2xl;
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
   }
 
   /* 内部内容区域 */
   .post-content {
-    @apply p-8 flex flex-col h-full bg-white/60 backdrop-blur-md rounded-[2rem] border border-white/50
+    @apply p-6 flex flex-col h-full rounded-xl
            transition-all duration-500;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.3) 100%);
   }
 
   .post-card:hover .post-content {
-    @apply bg-white/80 backdrop-blur-lg border-slate-50;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.5) 100%);
   }
 
-  /* 标签：小而精致 */
+  /* 标签：现代玻璃态 */
   .category-tag {
-    @apply inline-flex items-center text-[9px] font-black uppercase tracking-[0.2em]
-           text-blue-600 bg-blue-50 px-3 py-1 rounded-full mb-6 w-fit;
+    @apply inline-flex items-center text-[9px] font-semibold uppercase tracking-[0.25em]
+           text-slate-600 bg-gradient-to-r from-slate-100/90 to-slate-200/90 px-3 py-1.5 rounded-lg mb-5 w-fit
+           transition-all duration-300;
+    backdrop-filter: blur(4px);
   }
 
-  /* 标题：极粗黑体 */
+  .post-card:hover .category-tag {
+    @apply from-blue-100/90 to-cyan-100/90;
+  }
+
+  /* 标题：现代优雅 */
   .post-title {
-    @apply text-2xl font-black text-slate-900 tracking-tighter leading-tight mb-4
-           transition-colors duration-300 group-hover/title:text-blue-600;
+    @apply text-xl font-bold text-slate-900 tracking-tight leading-snug mb-4
+           transition-all duration-300;
+    background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
-  /* 简介：控制行数 */
+  .post-card:hover .post-title {
+    background: linear-gradient(135deg, #2563eb 0%, #0891b2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* 简介：现代简洁 */
   .post-description {
-    @apply text-slate-400 text-sm font-medium leading-relaxed mb-8 line-clamp-3;
+    @apply text-slate-500 text-sm leading-relaxed mb-5 line-clamp-3;
+    transition: color 0.3s ease;
   }
 
-  /* 页脚：精密数据感 */
+  .post-card:hover .post-description {
+    @apply text-slate-600;
+  }
+
+  /* 页脚：现代精致 */
   .post-footer {
-    @apply flex justify-between items-center mt-auto pt-6 border-t border-slate-100/60;
+    @apply flex justify-between items-center mt-auto pt-4;
+    border-top: 1px solid rgba(226, 232, 240, 0.6);
   }
 
   .post-footer time {
-    @apply font-mono text-[10px] font-bold text-slate-300 uppercase tracking-wider;
+    @apply font-mono text-[10px] font-medium text-slate-400 uppercase tracking-wider
+           transition-colors duration-300;
   }
 
-  /* 悬浮才出现的按钮 */
+  .post-card:hover .post-footer time {
+    @apply text-slate-500;
+  }
+
+  /* 悬浮才出现的按钮 - 流畅淡入 */
   .read-more-btn {
-    @apply text-[10px] font-black uppercase tracking-widest text-slate-900
-           opacity-0 translate-x-4 transition-all duration-500;
+    @apply text-[10px] font-semibold uppercase tracking-wider text-slate-900
+           opacity-0 transition-all duration-500;
+    transform: translateY(4px);
   }
 
   .post-card:hover .read-more-btn {
-    @apply opacity-100 translate-x-0;
+    @apply opacity-100;
+    transform: translateY(0);
   }
 
   /* Hero区域样式 */
@@ -329,7 +362,7 @@
            text-slate-400 bg-slate-100/80 px-2.5 py-1 rounded-full mt-auto;
   }
 
-  /* 加载更多按钮增强 */
+  /* 加载更多按钮 - 极简设计 */
   .load-more-btn {
     @apply relative overflow-hidden;
   }
@@ -337,12 +370,12 @@
   .load-more-btn::before {
     content: '';
     @apply absolute inset-0 opacity-0 transition-opacity duration-300;
-    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+    background: linear-gradient(90deg, transparent, rgba(15, 23, 42, 0.05), transparent);
   }
 
   .load-more-btn:hover::before {
     @apply opacity-100;
-    animation: shimmer 1.5s infinite;
+    animation: shimmer 2s infinite;
   }
 
   /* 骨架屏动画 */
@@ -358,17 +391,20 @@
     animation: shimmer 1.5s infinite;
   }
 
-  /* 文章缩略图容器 */
+  /* 文章缩略图容器 - 现代设计 */
   .post-thumbnail {
-    @apply relative w-full h-48 overflow-hidden rounded-2xl mb-6 bg-slate-100;
+    @apply relative w-full h-44 overflow-hidden rounded-xl mb-5;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
   }
 
   .post-thumbnail img {
-    @apply w-full h-full object-cover transition-transform duration-700;
+    @apply w-full h-full object-cover transition-all duration-700;
+    filter: brightness(0.95);
   }
 
   .post-card:hover .post-thumbnail img {
     @apply scale-110;
+    filter: brightness(1);
   }
 
   .post-thumbnail-placeholder {
