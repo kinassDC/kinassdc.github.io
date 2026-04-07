@@ -516,6 +516,8 @@ import MainLayout from '../layouts/MainLayout.astro';
   };
 
   // 绑定事件并启动
-  elements.loadMoreBtn.addEventListener('click', loadMorePosts);
+  if (elements.loadMoreBtn) {
+    elements.loadMoreBtn.addEventListener('click', loadMorePosts);
+  }
   init();
 </script>
