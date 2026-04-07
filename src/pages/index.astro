@@ -374,7 +374,6 @@ import MainLayout from '../layouts/MainLayout.astro';
     // 设置动画
     article.classList.add('animate-fade-up');
     article.style.animationDelay = `${Math.min(index * 0.1, 0.5)}s`;
-    article.style.opacity = '0';
 
     // 设置分类
     const categoryTag = article.querySelector('.category-tag') as HTMLElement;
