@@ -132,7 +132,7 @@ import MainLayout from '../layouts/MainLayout.astro';
       if (!response.ok) throw new Error('Failed to load posts');
 
       const data = await response.json();
-      const posts: ParticlePost[] = data.posts.slice(0, 15); // 取前15篇
+      const posts: ParticlePost[] = data.posts.slice(0, 25); // 取前25篇
 
       // 创建星空背景
       const starCount = 80;
@@ -168,8 +168,8 @@ import MainLayout from '../layouts/MainLayout.astro';
       // 生成粒子位置（避免重叠）
       const particles: Array<{ x: number; y: number; post: ParticlePost }> = [];
       const containerRect = container.getBoundingClientRect();
-      const padding = 50;
-      const minDistance = 60;
+      const padding = 40;
+      const minDistance = 25;
 
       for (const post of posts) {
         let x: number;
@@ -193,82 +193,40 @@ import MainLayout from '../layouts/MainLayout.astro';
       particles.forEach((particle) => {
         const node = document.createElement('a');
         node.href = `/blog/${particle.post.slug}`;
-        node.className = 'particle-node absolute flex items-center justify-center rounded-full cursor-pointer transition-all duration-500 hover:z-20';
+        node.className = 'particle-node absolute rounded-full cursor-pointer transition-all duration-300 hover:z-20';
         node.style.left = `${particle.x}px`;
         node.style.top = `${particle.y}px`;
-        node.style.width = '10px';
-        node.style.height = '10px';
+        node.style.width = '5px';
+        node.style.height = '5px';
         node.style.transform = 'translate(-50%, -50%)';
         node.style.zIndex = '10';
 
         // 根据分类设置颜色
         const isTech = particle.post.category === '技术';
-        const baseColor = isTech ? '#3b82f6' : '#ec4899'; // blue-500 : pink-500
-        const glowColor = isTech ? 'rgba(59, 130, 246, 0.6)' : 'rgba(236, 72, 153, 0.6)';
+        const color = isTech ? '#3b82f6' : '#ec4899';
 
-        // 创建 3D 球体粒子
+        // 简单的圆点
+        node.style.backgroundColor = color;
+
+        // 添加 tooltip
         node.innerHTML = `
-          <div class="particle-sphere relative w-2.5 h-2.5 rounded-full"
-               style="
-                 background: radial-gradient(circle at 35% 35%,
-                   rgba(255, 255, 255, 0.9) 0%,
-                   ${baseColor} 20%,
-                   ${glowColor} 60%,
-                   rgba(0, 0, 0, 0.3) 100%
-                 );
-                 box-shadow:
-                   0 0 8px ${glowColor},
-                   0 0 16px ${glowColor},
-                   0 0 24px ${glowColor},
-                   inset -2px -2px 6px rgba(0, 0, 0, 0.4),
-                   inset 2px 2px 6px rgba(255, 255, 255, 0.3);
-                 animation: pulse-glow ${2 + Math.random()}s ease-in-out infinite;
-               ">
-            <div class="absolute top-1 left-1 w-1 h-1 bg-white rounded-full opacity-80 blur-[0.5px]"></div>
-          </div>
-          <div class="particle-tooltip absolute opacity-0 pointer-events-none transition-all duration-300 bg-slate-900/95 backdrop-blur-sm text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap shadow-xl border border-slate-700" style="top: -45px; left: 50%; transform: translateX(-50%) scale(0.9);">
+          <div class="particle-tooltip absolute opacity-0 pointer-events-none transition-opacity duration-200 bg-slate-900/95 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap shadow-lg" style="top: -40px; left: 50%; transform: translateX(-50%);">
             ${particle.post.title}
-            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-2 h-2 bg-slate-900/95 border-r border-b border-slate-700 rotate-45"></div>
+            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-2 h-2 bg-slate-900/95 rotate-45"></div>
           </div>
         `;
 
         // 悬浮显示 tooltip
         node.addEventListener('mouseenter', () => {
           const tooltip = node.querySelector('.particle-tooltip') as HTMLElement;
-          const sphere = node.querySelector('.particle-sphere') as HTMLElement;
-          if (tooltip) {
-            tooltip.style.opacity = '1';
-            tooltip.style.transform = 'translateX(-50%) scale(1)';
-          }
-          if (sphere) {
-            sphere.style.transform = 'scale(1.5)';
-            sphere.style.boxShadow = `
-              0 0 12px ${glowColor},
-              0 0 24px ${glowColor},
-              0 0 36px ${glowColor},
-              inset -3px -3px 8px rgba(0, 0, 0, 0.5),
-              inset 3px 3px 8px rgba(255, 255, 255, 0.4)
-            `;
-          }
+          if (tooltip) tooltip.style.opacity = '1';
+          node.style.transform = 'translate(-50%, -50%) scale(1.5)';
         });
 
         node.addEventListener('mouseleave', () => {
           const tooltip = node.querySelector('.particle-tooltip') as HTMLElement;
-          const sphere = node.querySelector('.particle-sphere') as HTMLElement;
-          if (tooltip) {
-            tooltip.style.opacity = '0';
-            tooltip.style.transform = 'translateX(-50%) scale(0.9)';
-          }
-          if (sphere) {
-            sphere.style.transform = 'scale(1)';
-            sphere.style.boxShadow = `
-              0 0 8px ${glowColor},
-              0 0 16px ${glowColor},
-              0 0 24px ${glowColor},
-              inset -2px -2px 6px rgba(0, 0, 0, 0.4),
-              inset 2px 2px 6px rgba(255, 255, 255, 0.3)
-            `;
-          }
+          if (tooltip) tooltip.style.opacity = '0';
+          node.style.transform = 'translate(-50%, -50%) scale(1)';
         });
 
         // 浮动动画
@@ -294,14 +252,6 @@ import MainLayout from '../layouts/MainLayout.astro';
           }
           75% {
             transform: translate(-50%, -50%) translate(${Math.random() * 8 - 4}px, ${Math.random() * 8 - 4}px);
-          }
-        }
-        @keyframes pulse-glow {
-          0%, 100% {
-            opacity: 0.8;
-          }
-          50% {
-            opacity: 1;
           }
         }
       `;
